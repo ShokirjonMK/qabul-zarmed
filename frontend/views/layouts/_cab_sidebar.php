@@ -1,0 +1,75 @@
+<?php
+
+function getActive($cont, $act)
+{
+    $controller = Yii::$app->controller->id;
+    $action = Yii::$app->controller->action->id;
+    if ($controller == $cont && $action == $act) {
+        return "active";
+    } else {
+        return false;
+    }
+}
+?>
+
+<div class="ika_content_left_item">
+    <div class="sidebar-top">
+        <div class="sidebar-left-right">
+            <div class="sidebar-left">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div class="sidebar-right">
+                <h6 class="mt-1">URAIMOV IQBOLJON ANVARJON O'G'LI</h6>
+                <p class="mt-1">ID: <span>&nbsp; 26</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-content mb-4">
+        <ul>
+            <li>
+                <a href="/cabinet/index" class="<?= getActive('cabinet', 'index') ?>">
+                    <span><i class="bi bi-signpost"></i></span>
+                    <span class="sidebar-link-test">Mening ma'lumotlarim</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/cabinet/exam" class="<?= getActive('cabinet', 'exam') ?>">
+                    <span><i class="bi bi-graph-up"></i></span>
+                    <span class="sidebar-link-test">Imtixon</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/cabinet/payments" class="<?= getActive('cabinet', 'index1') ?>">
+                    <span><i class="bi bi-coin"></i></span>
+                    <span class="sidebar-link-test">Shartnoma</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/cabinet/send-file" class="<?= getActive('cabinet', 'send-file') ?>">
+                    <span><i class="bi bi-credit-card"></i></span>
+                    <span class="sidebar-link-test">Yuborilgan hijjatlar</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/cabinet/sign-out" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+                    <span><i class="bi bi-box-arrow-right"></i></span>
+                    <span class="sidebar-link-test">Kabinetdan chiqish</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-bottom mb-4">
+        <div class="sidebar-bottom-left">
+            <i class="bi bi-question-circle"></i>
+        </div>
+        <div class="sidebar-bottom-right">
+            <p>Savolingiz bormi?</p>
+            <a href="#">Murojaat etish</a>
+        </div>
+    </div>
+</div>
