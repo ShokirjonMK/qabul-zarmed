@@ -1,5 +1,5 @@
 # Use the official PHP 7.4-FPM base image
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 
 # [Optional] Prevent some interactive prompts during package installs
 ENV DEBIAN_FRONTEND=noninteractive
