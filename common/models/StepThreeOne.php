@@ -86,7 +86,7 @@ class StepThreeOne extends Model
             'exam_type' => $this->exam_type,
         ]);
 
-//        if ($student->edu_direction_id != $this->edu_direction_id) {
+        if ($student->edu_direction_id != $this->edu_direction_id) {
             $eduDirection = EduDirection::findOne($this->edu_direction_id);
             $student->setAttributes([
                 'lang_id' => $this->lang_id,
@@ -101,7 +101,7 @@ class StepThreeOne extends Model
                 $transaction->rollBack();
                 return ['is_ok' => false , 'errors' => $result['errors']];
             }
-//        }
+        }
 
         if (!$student->save(false)) {
             $errors[] = ['Student maʼlumotlarini yangilashda xatolik yuz berdi.'];

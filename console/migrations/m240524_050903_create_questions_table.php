@@ -31,7 +31,7 @@ class m240524_050903_create_questions_table extends Migration
             'image' => $this->string(255)->null(),
             'level' => $this->tinyInteger(1)->defaultValue(1),
 
-            'type' => $this->tinyInteger(1)->defaultValue(1),
+            'type' => $this->tinyInteger(1)->defaultValue(0),
 
 
             'status' => $this->integer()->defaultValue(0),

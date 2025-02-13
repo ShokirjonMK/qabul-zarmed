@@ -149,9 +149,6 @@ class Questions extends \yii\db\ActiveRecord
             }
         }
 
-
-
-
         if ($model->text == null && $model->image == null) {
             $errors[] = ['Matn , Rasm , Audio shulardan birini to\'ldirish shart!'];
         }

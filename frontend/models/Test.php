@@ -38,23 +38,22 @@ class Test extends Model
         $transaction = Yii::$app->db->beginTransaction();
         $errors = [];
         $time = time();
-        $direction = $student->direction;
-
+        $eduDirection = $student->eduDirection;
 
         if ($student->edu_type_id != 1) {
             $errors[] = ['Siz sinovdan o\'ta olmaysiz.'];
         } else {
             $exam = Exam::findOne([
-                'direction_id' => $student->direction_id,
+                'edu_direction_id' => $student->edu_direction_id,
                 'student_id' => $student->id,
                 'is_deleted' => 0
             ]);
             if ($exam->status > 2) {
                 $errors[] = ['Siz sinovni yakunlagansiz.'];
             } else {
-                if ($direction->oferta == 1) {
+                if ($eduDirection->is_oferta == 1) {
                     $oferta = StudentOferta::findOne([
-                        'direction_id' => $student->direction_id,
+                        'edu_direction_id' => $student->edu_direction_id,
                         'student_id' => $student->id,
                         'status' => 1,
                         'is_deleted' => 0
@@ -77,7 +76,7 @@ class Test extends Model
                         $i = 1;
                         foreach ($subjects as $subject) {
                             ExamStudentQuestions::updateAll(['status' => 0 , 'is_deleted' => 2] , ['user_id' => $user->id ,'exam_subject_id' => $subject->id, 'status' => 1, 'is_deleted' => 0]);
-                            $questionCount = $subject->directionSubject->question_count;
+                            $questionCount = $subject->directionSubject->count;
                             $query = Questions::find()
                                 ->where([
                                     'subject_id' => $subject->subject_id,
@@ -146,7 +145,7 @@ class Test extends Model
             $directionSubject = $examSubject->directionSubject;
             $one_ball = $directionSubject->ball;
             if ($examSubject->file_status == 2) {
-                $examSubject->ball = $directionSubject->question_count * $one_ball;
+                $examSubject->ball = $directionSubject->count * $one_ball;
                 ExamStudentQuestions::updateAll(['is_correct' => 1] , ['exam_subject_id' => $examSubject->id , 'status' => 1, 'is_deleted' => 0]);
             } else {
                 $questions = ExamStudentQuestions::find()
@@ -162,22 +161,23 @@ class Test extends Model
             $examSubject->save(false);
         }
 
-        if ($model->ball < 56.7 && $model->ball >= 10) {
-            $model->ball = rand(57 , 65);
-            $model->contract_type = 1;
-            $model->contract_price = $direction->contract;
-        } elseif ($model->ball < 10) {
-            $model->contract_type = 1.5;
-            $model->contract_price = $direction->contract * 1.5;
-        } elseif ($model->ball >= 56.7) {
-            $model->contract_type = 1;
-            $model->contract_price = $direction->contract;
-        }
-        $model->confirm_date = time();
+//        if ($model->ball < 56.7 && $model->ball >= 10) {
+//            $model->ball = rand(57 , 65);
+//            $model->contract_type = 1;
+//            $model->contract_price = $direction->contract;
+//        } elseif ($model->ball < 10) {
+//            $model->contract_type = 1.5;
+//            $model->contract_price = $direction->contract * 1.5;
+//        } elseif ($model->ball >= 56.7) {
+//            $model->contract_type = 1;
+//            $model->contract_price = $direction->contract;
+//        }
+
+//        $model->confirm_date = time();
         $model->save(false);
-        $text = "Tabriklaymiz! Siz “GLOBAL SOFTLINE UNIVERSITY”ga talabalikka tavsiya etildingiz. To'lov shartnomasini yuklab olishni unutmang. Shartnomangizni https://qabul.tpu.uz sayti orqali yuklab oling. Aloqa markazi: 77 129 29 29. Rasmiy telegram kanal: https://t.me/perfect_university";
-        $phone = $student->user->username;
-        Message::sendedSms($phone , $text);
+//        $text = "Tabriklaymiz! Siz “GLOBAL SOFTLINE UNIVERSITY”ga talabalikka tavsiya etildingiz. To'lov shartnomasini yuklab olishni unutmang. Shartnomangizni https://qabul.tpu.uz sayti orqali yuklab oling. Aloqa markazi: 77 129 29 29. Rasmiy telegram kanal: https://t.me/perfect_university";
+//        $phone = $student->user->username;
+//        Message::sendedSms($phone , $text);
 
         return $model;
     }

@@ -51,7 +51,7 @@ class Options extends \yii\db\ActiveRecord
     {
         return [
             [['question_id', 'subject_id'], 'required'],
-            [['question_id', 'subject_id', 'is_correct', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'is_deleted','order'], 'integer'],
+            [['question_id', 'subject_id', 'is_correct', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'is_deleted'], 'integer'],
             [['text'], 'string'],
             [['image'], 'string', 'max' => 255],
             [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => $this->photoExtension, 'maxSize' => $this->photoMaxSize],

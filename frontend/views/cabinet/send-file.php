@@ -96,13 +96,17 @@ function renderDocumentBox($document) {
 }
 ?>
 
-<div class="ikpage">
-    <div class="htitle">
-        <h6><?= Yii::t("app", "a44") ?></h6>
-        <span></span>
-    </div>
-    <div class="row top40">
-        <?php foreach ($documents as $document) renderDocumentBox($document); ?>
+<div class="ika_page_box">
+    <div class="ika_page_box_item">
+        <div class="ikpage">
+            <div class="htitle">
+                <h6><?= Yii::t("app", "a44") ?></h6>
+                <span></span>
+            </div>
+            <div class="row top40">
+                <?php foreach ($documents as $document) renderDocumentBox($document); ?>
+            </div>
+        </div>
     </div>
 </div>
 

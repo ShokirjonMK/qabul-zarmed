@@ -117,7 +117,7 @@ class StepThree extends Model
             'edu_direction' => null,
         ], ['id' => $studentId]);
 
-        foreach (['common\models\Exam', 'common\models\StudentDtm', 'common\models\StudentPerevot', 'common\models\StudentMaster', 'common\models\StudentOferta'] as $table) {
+        foreach (['common\models\Exam', 'common\models\ExamSubject','common\models\StudentDtm', 'common\models\StudentPerevot', 'common\models\StudentMaster', 'common\models\StudentOferta'] as $table) {
             if (class_exists($table)) {
                 call_user_func([$table, 'updateAll'], ['is_deleted' => 1], ['student_id' => $studentId, 'is_deleted' => 0]);
             }

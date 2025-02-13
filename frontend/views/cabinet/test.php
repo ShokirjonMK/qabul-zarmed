@@ -26,84 +26,174 @@ $direction = $student->direction;
 ?>
 
 
-<div class="hpage">
-    <div class="htitle">
-        <h5><?= $direction->code." - ".$direction['name_'.$lang] ?></h5>
-        <span></span>
-    </div>
+<div class="ika_test">
+    <div class="test">
+        <div class="test-left">
 
-    <?php if (count($questionData) > 0) : ?>
-        <div class="test_page top30">
-            <div class="test_page_left">
+            <div class="mobile-test">
+                <div class="mobile-test-time">
+                    <div class="page-card">
+                        <div class="page-card-item">
+                            <div class="test-time-item">
+                                <div class="test-time-item-left divBorderRight">
+                                    <img src="/frontend/web/images/clock.gif" alt="">
+                                </div>
+                                <div class="test-time-item-center">
+                                    <h6><span id="day">1156</span> : <span id="hour">14</span> : <span id="minute">35</span> : <span id="secund">01</span></h6>
+                                </div>
+                                <button class="test-time-item-left divBorderLeft" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight1" aria-controls="offcanvasRight">
+                                    <img src="/frontend/web/images/list.gif" alt="">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offSidebarSecond offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight1" aria-labelledby="offcanvasRightLabel">
+                <div class="offSidebarItemSecond">
+                    <div class="offcanvas-header">
+                        <h5 id="offcanvasRightLabel">
+                            <img src="/frontend/web/images/clock.gif" alt="">
+                        </h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+
+                        <div class="test-time">
+                            <p>Vaqtingiz yakunlanishiga shuncha vaqt qoldi: <span>kun</span> | <span>soat</span> | <span>minut</span> | <span>sekund</span></p>
+                            <h6><span id="day2">00</span> : <span id="hour2">00</span> : <span id="minute2">00</span> : <span id="secund2">00</span></h6>
+                        </div>
+                        <div class="question-info">
+                            <div class="ika_subjects">
+
+                                <?php if (count($examSubjects) > 0) : ?>
+                                    <?php foreach ($examSubjects as $examSubject) : ?>
+                                        <?php $subjectQuestions = $examSubject->studentQuestions; ?>
+                                        <?php $qCount = count($subjectQuestions); ?>
+                                        <?php $startCount = '-'; ?>
+                                        <?php $endCount = '-'; ?>
+                                        <?php if ($qCount > 0) : ?>
+                                            <?php $i = 0; ?>
+                                            <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
+                                                <?php
+                                                if ($i == 0) {
+                                                    $startCount = $subjectQuestion->order;
+                                                } else {
+                                                    $endCount = $subjectQuestion->order;
+                                                }
+                                                $i++;
+                                                ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                        <p class="subject-title"><?= $examSubject->subject['name_'.$lang] ?></p>
+                                        <div class="subject-info">
+                                            <p><span>Savollar soni: <?= $qCount ?> ta &nbsp; | &nbsp; <?= $startCount ?>-<?= $endCount ?> gacha</span></p>
+                                            <p><span>Har bir savolga beriladigan bal: <?= $examSubject->ball ?></span></p>
+                                        </div>
+                                        <?php if ($qCount > 0) : ?>
+                                            <div class="subject-question-number">
+                                                <ul>
+                                                    <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
+                                                        <li id="order1_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
+                                                        <span>
+                                                            <a href="#"><?= $subjectQuestion->order; ?></a>
+                                                        </span>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
+                                        <br>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+
+                                <button class="testTheEnd" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    <span>Yakunlash</span>
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <?php if (count($questionData) > 0) : ?>
                 <?php $number = 1; ?>
-                <?php foreach ($questionData as $examQuestions) : ?>
-                    <?php  $question = $examQuestions->question;  ?>
-                    <?php  $options = Options::options($question->id , $examQuestions->option); ?>
-                    <div class="test_item">
-                        <h6 class="test_item_title"><?= $examQuestions->order ?> - savol</h6>
+                <?php foreach ($questionData as $grantStudentQuestions) : ?>
+                    <?php  $question = $grantStudentQuestions->question;  ?>
+                    <?php  $options = Options::options($question->id , $grantStudentQuestions->option); ?>
+                    <div class="question">
+                        <div class="page-card">
+                            <div class="page-card-item">
+                                <!-- Questions -->
+                                <div class="question-item">
+                                    <p class="question-number"><?= $grantStudentQuestions->order ?> - savol.</p>
 
-                        <?php if ($question->text != null) : ?>
-                            <div class="question-text">
-                                <p><?= $question->text ?></p>
-                            </div>
-                        <?php endif; ?>
+                                    <?php if ($question->text != null) : ?>
+                                        <div class="question-text">
+                                            <p><?= $question->text ?></p>
+                                        </div>
+                                    <?php endif; ?>
 
-                        <?php if ($question->image != null) : ?>
-                            <div class="test_item_img">
-                                <img src="/backend/web/uploads/questions/<?= $question->image ?>">
-                            </div>
-                        <?php endif; ?>
+                                    <?php if ($question->image != null) : ?>
+                                        <div class="question-img">
+                                            <img src="/backend/web/uploads/questions/<?= $question->image ?>">
+                                        </div>
+                                    <?php endif; ?>
 
-                        <br>
 
-                        <div class="test_options">
+                                    <div class="options">
+                                        <?php if (count($options) > 0) : ?>
+                                            <?php $varinat = 1; ?>
+                                            <?php foreach ($options as $option) : ?>
 
-                        <?php if (count($options) > 0) : ?>
-                            <?php $varinat = 1; ?>
-                            <?php foreach ($options as $option) : ?>
+                                                <div class="inputDiv">
+                                                    <input type="radio"
+                                                           name="question_name_<?= $grantStudentQuestions->order ?>"
+                                                           id="questionId_<?= $number ?>"
+                                                           data-question="<?= $grantStudentQuestions->id ?>"
+                                                           data-option="<?= $option->id ?>"
+                                                           data-order="<?= $grantStudentQuestions->order ?>"
+                                                        <?php if ($grantStudentQuestions->option_id == $option->id) { echo "checked";} ?>
+                                                           class="visually-hidden">
+                                                    <label for="questionId_<?= $number ?>" class="option-label">
+                                                        <div class="option-label-left">
+                                                        <span>
+                                                            <?php
+                                                            $variants = ["A", "B", "C", "D", "E"];
 
-                            <div class="variants">
-                                <input type="radio"
-                                       name="question_name_<?= $examQuestions->order ?>"
-                                       id="questionId_<?= $number ?>"
-                                       data-question="<?= $examQuestions->id ?>"
-                                       data-option="<?= $option->id ?>"
-                                       data-order="<?= $examQuestions->order ?>"
-                                    <?php if ($examQuestions->option_id == $option->id) { echo "checked";} ?>
-                                       class="visually-hidden">
+                                                            if ($varinat >= 1 && $varinat <= count($variants)) {
+                                                                echo $variants[$varinat - 1];
+                                                            } else {
+                                                                echo "X";
+                                                            }
+                                                            $varinat++;
+                                                            ?>
+                                                        </span>
+                                                        </div>
+                                                        <div class="option-label-right">
+                                                            <?php if ($option->text != null) : ?>
+                                                                <p>
+                                                                    <?= $option->text ?>
+                                                                </p>
+                                                            <?php endif; ?>
+                                                            <?php if ($option->image != null) : ?>
+                                                                <div class="question-img">
+                                                                    <img src="/backend/web/uploads/options/<?= $option->image ?>" alt="RASN MAVJUD EMAS">
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </label>
+                                                </div>
 
-                                <label for="questionId_<?= $number ?>" class="test_options_label">
-                                    <div class="test_options_abs">
-                                        <?php
-                                        $variants = ["A", "B", "C", "D", "E"];
-
-                                        if ($varinat >= 1 && $varinat <= count($variants)) {
-                                            echo $variants[$varinat - 1];
-                                        } else {
-                                            echo "X";
-                                        }
-                                        $varinat++;
-                                        ?>
-                                    </div>
-                                    <div class="test_options_text">
-                                        <?php if ($option->text != null) : ?>
-                                            <div class="option-text">
-                                                <?= $option->text ?>
-                                            </div>
+                                                <?php $number++ ?>
+                                            <?php endforeach; ?>
                                         <?php endif; ?>
-                                        <?php if ($option->image != null) : ?>
-                                            <div class="test_item_img">
-                                                <img src="/backend/web/uploads/options/<?= $option->image ?>" alt="RASN MAVJUD EMAS">
-                                            </div>
-                                        <?php endif; ?>
                                     </div>
-                                </label>
+                                </div>
                             </div>
-
-                            <?php $number++ ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -112,55 +202,81 @@ $direction = $student->direction;
                     'pagination' => $dataProvider->pagination,
                     'linkOptions' => ['class' => 'paginationLink'],
                     'linkContainerOptions' => ['class' => 'paginationConOpt'],
-                    'firstPageLabel' => '<i class="fa-solid fa-arrow-left-long"></i>',
-                    'lastPageLabel' => '<i class="fa-solid fa-arrow-right-long"></i>',
+                    'firstPageLabel' => '<i class="bi bi-arrow-left-short"></i>',
+                    'lastPageLabel' => '<i class="bi bi-arrow-right-short"></i>',
+                    'nextPageLabel' => false,
+                    'prevPageLabel' => false,
                 ]);
                 ?>
-            </div>
 
+            <?php endif; ?>
 
-            <div class="test_page_right">
-                <div class="test_page_right_clock">
-                    <div>
-                        <img src="/frontend/web/images/clock.svg" alt="">
-                    </div>
-                    <h5><span id="day1">00</span> : <span id="hour1">00</span> : <span id="minute1">00</span> : <span id="secund1">00</span></h5>
-                </div>
+        </div>
 
-
-                <?php if (count($examSubjects) > 0) : ?>
-                    <?php foreach ($examSubjects as $examSubject) : ?>
-                        <?php $subjectQuestions = $examSubject->studentQuestions; ?>
-                        <div class="test_subjects">
-                            <h6 class="test_subjects_title"><?= $examSubject->subject['name_'.$lang] ?></h6>
-                            <?php if (count($subjectQuestions) > 0) : ?>
-
-                                <ul>
-                                    <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
-
-                                        <?php
-                                            $page = (int)($subjectQuestion->order / 5);
-                                            $urlPage = $page + 1;
-                                        ?>
-
-                                        <li id="order_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
-                                            <a href="<?= Url::to(['cabinet/test' , 'page' => $urlPage , 'per-page' => 5]) ?>"><?= $subjectQuestion->order; ?></a>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
+        <div class="test-right">
+            <div class="test-right-sticky">
+                <div class="page-card">
+                    <div class="page-card-item">
+                        <div class="test-time">
+                            <p>Vaqtingiz yakunlanishiga shuncha vaqt qoldi: <span>kun</span> | <span>soat</span> | <span>minut</span> | <span>sekund</span></p>
+                            <h6><span id="day1">00</span> : <span id="hour1">00</span> : <span id="minute1">00</span> : <span id="secund1">00</span></h6>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                        <div class="question-info">
+                            <div class="ika_subjects">
 
-                <div class="test_end top30">
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><?= Yii::t("app" , "a142") ?></button>
+                                <?php if (count($examSubjects) > 0) : ?>
+                                    <?php foreach ($examSubjects as $examSubject) : ?>
+                                        <?php $subjectQuestions = $examSubject->studentQuestions; ?>
+                                        <?php $qCount = count($subjectQuestions); ?>
+                                        <?php $startCount = '-'; ?>
+                                        <?php $endCount = '-'; ?>
+                                        <?php if ($qCount > 0) : ?>
+                                            <?php $i = 0; ?>
+                                            <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
+                                                <?php
+                                                if ($i == 0) {
+                                                    $startCount = $subjectQuestion->order;
+                                                } else {
+                                                    $endCount = $subjectQuestion->order;
+                                                }
+                                                $i++;
+                                                ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                        <p class="subject-title"><?= $examSubject->subject['name_'.$lang] ?></p>
+                                        <div class="subject-info">
+                                            <p><span>Savollar soni: <?= $qCount ?> ta &nbsp; | &nbsp; <?= $startCount ?>-<?= $endCount ?> gacha</span></p>
+                                            <p><span>Har bir savolga beriladigan bal: <?= $examSubject->ball ?></span></p>
+                                        </div>
+                                        <?php if ($qCount > 0) : ?>
+                                            <div class="subject-question-number">
+                                                <ul>
+                                                    <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
+                                                        <li id="order1_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
+                                                        <span>
+                                                            <a href="#"><?= $subjectQuestion->order; ?></a>
+                                                        </span>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
+                                        <br>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+
+                                <button class="testTheEnd" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    <span>Yakunlash</span>
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-
             </div>
         </div>
-    <?php endif; ?>
-
+    </div>
 </div>
 
     <!-- Modal -->
@@ -214,10 +330,18 @@ $js = <<<JS
             const m = Math.floor((distance % hour) / minute);
             const s = Math.floor((distance % minute) / second);
      
+            document.getElementById("day").innerText = formatTime(d);
             document.getElementById("day1").innerText = formatTime(d);
+            document.getElementById("day2").innerText = formatTime(d);
+            document.getElementById("hour").innerText = formatTime(h);
             document.getElementById("hour1").innerText = formatTime(h);
+            document.getElementById("hour2").innerText = formatTime(h);
+            document.getElementById("minute").innerText = formatTime(m);
             document.getElementById("minute1").innerText = formatTime(m);
+            document.getElementById("minute2").innerText = formatTime(m);
+            document.getElementById("secund").innerText = formatTime(s);
             document.getElementById("secund1").innerText = formatTime(s);
+            document.getElementById("secund2").innerText = formatTime(s);
             
             if (distance < 0) {
                 clearInterval(x);
@@ -232,7 +356,7 @@ $js = <<<JS
     }());
 
     $(document).ready(function() {
-        $(".variants input").on('change', function () {
+        $(".inputDiv input").on('change', function () {
             var question = $(this).data('question');
             var option = $(this).data('option');
             var order = $(this).data('order');

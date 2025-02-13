@@ -12,6 +12,16 @@ use common\widgets\Alert;
 AppAsset::register($this);
 $user = Yii::$app->user->identity;
 $student = Student::findOne(['user_id' => $user->id]);
+function getActive($cont, $act)
+{
+    $controller = Yii::$app->controller->id;
+    $action = Yii::$app->controller->action->id;
+    if ($controller == $cont && $action == $act) {
+        return "active";
+    } else {
+        return false;
+    }
+}
 ?>
 <?php $this->beginPage() ?>
     <!DOCTYPE html>
@@ -42,9 +52,7 @@ $student = Student::findOne(['user_id' => $user->id]);
                     ]) ; ?>
                 </div>
                 <div class="ika_content_right">
-                    <div class="ika_content_right_item">
-                        <?= $content ?>
-                    </div>
+                    <?= $content ?>
                 </div>
             </div>
         </div>

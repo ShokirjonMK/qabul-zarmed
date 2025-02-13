@@ -37,6 +37,7 @@ use Yii;
  * @property Lang $language
  * @property Student $student
  * @property Subjects $subject
+ * @property ExamStudentQuestions $studentQuestions
  * @property User $user
  */
 class ExamSubject extends \yii\db\ActiveRecord
@@ -198,5 +199,12 @@ class ExamSubject extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function getStudentQuestions()
+    {
+        $user = Yii::$app->user->identity;
+        return $this->hasMany(ExamStudentQuestions::class, ['exam_subject_id' => 'id'])
+            ->where(['user_id' => $user->id , 'status' => 1, 'is_deleted' => 0]);
     }
 }

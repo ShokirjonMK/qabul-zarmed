@@ -1,16 +1,3 @@
-<?php
-
-function getActive($cont, $act)
-{
-    $controller = Yii::$app->controller->id;
-    $action = Yii::$app->controller->action->id;
-    if ($controller == $cont && $action == $act) {
-        return "active";
-    } else {
-        return false;
-    }
-}
-?>
 
 <div class="ika_content_left_item">
     <div class="sidebar-top">

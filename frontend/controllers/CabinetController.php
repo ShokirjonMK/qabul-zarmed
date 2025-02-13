@@ -60,24 +60,24 @@ class CabinetController extends Controller
     }
 
 
-    public function beforeAction($action)
-    {
-        if (!Yii::$app->user->isGuest) {
-            $controllerCheck = Yii::$app->controller->id;
-            $actionCheck = Yii::$app->controller->action->id;
-            if (!($controllerCheck == 'cabinet' && $actionCheck == 'step')) {
-                $user = Yii::$app->user->identity;
-                if ($user->step < 5) {
-                    Yii::$app->response->redirect(['cabinet/step', 'id' => $user->step]);
-                    return false;
-                }
-            }
-        } else {
-            Yii::$app->response->redirect(['site/login']);
-            return false;
-        }
-        return parent::beforeAction($action);
-    }
+//    public function beforeAction($action)
+//    {
+//        if (!Yii::$app->user->isGuest) {
+//            $controllerCheck = Yii::$app->controller->id;
+//            $actionCheck = Yii::$app->controller->action->id;
+//            if (!($controllerCheck == 'cabinet' && $actionCheck == 'step')) {
+//                $user = Yii::$app->user->identity;
+//                if ($user->step < 5) {
+//                    Yii::$app->response->redirect(['cabinet/step', 'id' => $user->step]);
+//                    return false;
+//                }
+//            }
+//        } else {
+//            Yii::$app->response->redirect(['site/login']);
+//            return false;
+//        }
+//        return parent::beforeAction($action);
+//    }
 
 
     public function actions()
@@ -163,7 +163,7 @@ class CabinetController extends Controller
         $searchModel = new ExamStudentQuestionsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams , $exam);
 
-        return $this->render('test' , [
+        return $this->render('test', [
             'exam' => $exam,
             'dataProvider' => $dataProvider,
             'student' => $student
@@ -192,38 +192,6 @@ class CabinetController extends Controller
 
         $user = Yii::$app->user->identity;
         $student = Student::findOne(['user_id' => $user->id]);
-
-        if ($student->edu_type_id == 1) {
-            $qabul = Exam::findOne([
-                'direction_id' => $student->direction_id,
-                'student_id' => $student->id,
-                'status' => 3,
-                'is_deleted' => 0,
-            ]);
-            if ($qabul) {
-                $t = true;
-            }
-        } elseif ($student->edu_type_id == 2) {
-            $perevot = StudentPerevot::findOne([
-                'direction_id' => $student->direction_id,
-                'student_id' => $student->id,
-                'file_status' => 2,
-                'is_deleted' => 0
-            ]);
-            if ($perevot) {
-                $t = true;
-            }
-        } elseif ($student->edu_type_id == 3) {
-            $dtm = StudentDtm::findOne([
-                'direction_id' => $student->direction_id,
-                'student_id' => $student->id,
-                'file_status' => 2,
-                'is_deleted' => 0
-            ]);
-            if ($dtm) {
-                $t = true;
-            }
-        }
 
         if ($t) {
             $errors[] = ['Ma\'lumotni tahrirlay olmaysiz'];
