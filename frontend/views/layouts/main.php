@@ -6,6 +6,17 @@
 use frontend\assets\AppAsset;
 use yii\bootstrap5\Html;
 
+function getActive($cont, $act)
+{
+    $controller = Yii::$app->controller->id;
+    $action = Yii::$app->controller->action->id;
+    if ($controller == $cont && $action == $act) {
+        return "active";
+    } else {
+        return false;
+    }
+}
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
