@@ -64,7 +64,7 @@ class SerCreate extends Model
             return ['is_ok' => false , 'errors' => $errors];
         }
 
-        if ($examSubject->status == 2) {
+        if ($examSubject->file_status == 2) {
             $errors[] = ['Avval yuklangan fayl tasdiqlangan'];
         } else {
             $photoFile = UploadedFile::getInstance($model, 'file');

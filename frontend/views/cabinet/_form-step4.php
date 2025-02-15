@@ -104,53 +104,46 @@ use common\models\Status;
         <div class="modal fade" id="perOfertaModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="ikmodel">
-                        <div class="ikmodel_item">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-body" id="perOferta">
+                        <?php $form = ActiveForm::begin([
+                            'id' => 'login-form',
+                            'options' => ['class' => 'top40'],
+                            'fieldConfig' => [
+                                'template' => '{label}{input}{error}',
+                            ]
+                        ]); ?>
+
+                        <div class="alert_question">
+                            <div class="alert_danger_circle">
+                                <div class="alert_danger_box">
+                                    <i class="fa-solid fa-question"></i>
+                                </div>
                             </div>
-                            <div class="modal-body" id="perOferta">
-                                <?php $form = ActiveForm::begin([
-                                    'id' => 'login-form',
-                                    'options' => ['class' => 'top40'],
-                                    'fieldConfig' => [
-                                        'template' => '{label}{input}{error}',
-                                    ]
-                                ]); ?>
-
-                                <div class="alert_question">
-                                    <div class="alert_danger_circle">
-                                        <div class="alert_danger_box">
-                                            <i class="fa-solid fa-question"></i>
-                                        </div>
-                                    </div>
-                                    <p style="text-transform: unset">
-                                        <?= Yii::t("app" , "a71") ?>
-                                    </p>
-                                    <p>
-                                        <?= Yii::t("app" , "a72") ?>
-                                    </p>
-                                </div>
-
-                                <div class="form-group d-none">
-                                    <?= $form->field($model, 'check')->textInput(); ?>
-                                </div>
-
-
-                                <div class="d-flex justify-content-around align-items-center top30">
-                                    <?= Html::button(Yii::t("app" , "a73"), ['class' => 'step_left_btn step_btn', 'data-bs-dismiss' => 'modal']) ?>
-                                    <?= Html::submitButton(Yii::t("app" , "a37"), ['class' => 'step_right_btn step_btn', 'name' => 'login-button']) ?>
-                                </div>
-
-                                <?php ActiveForm::end(); ?>
-                            </div>
+                            <p style="text-transform: unset">
+                                <?= Yii::t("app" , "a71") ?>
+                            </p>
+                            <p>
+                                <?= Yii::t("app" , "a72") ?>
+                            </p>
                         </div>
+
+                        <div class="form-group d-none">
+                            <?= $form->field($model, 'check')->textInput(); ?>
+                        </div>
+
+
+                        <div class="d-flex justify-content-around align-items-center top30">
+                            <?= Html::button(Yii::t("app" , "a73"), ['class' => 'step_left_btn step_btn', 'data-bs-dismiss' => 'modal']) ?>
+                            <?= Html::submitButton(Yii::t("app" , "a37"), ['class' => 'step_right_btn step_btn', 'name' => 'login-button']) ?>
+                        </div>
+
+                        <?php ActiveForm::end(); ?>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="step_btn_block top30">
+        <div class="step_btn_block">
             <button type="button" class="step_right_btn step_btn" data-bs-toggle="modal" data-bs-target="#perOfertaModal">
                 <?= Yii::t("app" , "a37") ?>
             </button>

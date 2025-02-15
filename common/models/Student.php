@@ -224,4 +224,46 @@ class Student extends \yii\db\ActiveRecord
     {
         return $this->last_name." ".$this->first_name." ".$this->middle_name;
     }
+
+    public function getIsConfirm()
+    {
+        $user = Yii::$app->user->identity;
+
+        if ($user->step != 5) {
+            return false;
+        }
+
+        $student = Student::findOne(['user_id' => $user->id]);
+        if (!$student) {
+            return false;
+        }
+
+        $eduTypeChecks = [
+            1 => [['class' => Exam::class, 'status' => 3]],
+            2 => [
+                ['class' => StudentPerevot::class, 'status' => 2],
+                ['class' => StudentDtm::class, 'status' => 2],
+                ['class' => StudentMaster::class, 'status' => 2],
+            ]
+        ];
+
+        if (!isset($eduTypeChecks[$student->edu_type_id])) {
+            return false;
+        }
+
+        foreach ($eduTypeChecks[$student->edu_type_id] as $check) {
+            if ($check['class']::findOne([
+                'student_id' => $student->id,
+                'status' => $check['status'],
+                'is_deleted' => 0
+            ])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
 }

@@ -5,6 +5,7 @@ use common\models\Status;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\models\StudentOferta;
+use common\models\StudentMaster;
 use common\models\StudentDtm;
 use common\models\Course;
 
@@ -16,7 +17,7 @@ $lang = Yii::$app->language;
 $direction = $student->direction;
 $eduDirection = $student->eduDirection;
 $oferta = StudentOferta::findOne(['student_id' => $student->id, 'edu_direction_id' => $student->edu_direction_id, 'status' => 1, 'is_deleted' => 0]);
-$perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id' => $student->edu_direction_id, 'status' => 1, 'is_deleted' => 0]);
+$perevot = StudentMaster::findOne(['student_id' => $student->id, 'edu_direction_id' => $student->edu_direction_id, 'status' => 1, 'is_deleted' => 0]);
 ?>
 
     <div class="qabul">
@@ -26,6 +27,16 @@ $perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id'
             </div>
 
             <div class="down_content">
+                <div class="down_content_box">
+                    <div class="down_content_box_left">
+                        <i class="fa-regular fa-bookmark"></i>
+                    </div>
+                    <div class="down_content_box_right">
+                        <p><?= Yii::t("app" , "a80") ?></p>
+                        <h6><?= $student->branch['name_'.$lang] ?></h6>
+                    </div>
+                </div>
+
                 <div class="down_content_box">
                     <div class="down_content_box_left">
                         <i class="fa-regular fa-bookmark"></i>
@@ -86,7 +97,7 @@ $perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id'
                         </div>
                         <div class="cfile_box_content_upload">
                             <?php
-                            $url = Url::to(['file/create-dtm', 'id' => $perevot->id]);
+                            $url = Url::to(['file/create-master', 'id' => $perevot->id]);
                             echo Html::a(Yii::t("app" , "a150"), $url, [
                                 "data-bs-toggle" => "modal",
                                 "data-bs-target" => "#studentTrCreate",
@@ -104,7 +115,7 @@ $perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id'
                                 <div class="cfile_box_content_file_right">
                                     <?php if ($perevot->file_status != 2) : ?>
                                         <?php
-                                        $url = Url::to(['file/del-dtm', 'id' => $perevot->id]);
+                                        $url = Url::to(['file/del-master', 'id' => $perevot->id]);
                                         echo Html::a('<i class="fa-solid fa-trash"></i>', $url, [
                                             'title' => Yii::t('app', 'a90'),
                                             'class' => "sertificat_box_trash",
@@ -121,7 +132,7 @@ $perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id'
                     <?php endif; ?>
                 </div>
 
-                <?php if ($eduDirection->is_oferta == 1) : ?>
+                <?php if ($direction->oferta == 1) : ?>
                     <div class="cfile_box">
                         <?php if ($oferta->file_status == 0) : ?>
                             <div class="cfile_box_head_right danger">
@@ -188,11 +199,9 @@ $perevot = StudentDtm::findOne(['student_id' => $student->id, 'edu_direction_id'
                             </div>
                         <?php endif; ?>
                     </div>
-
                 <?php endif; ?>
             </div>
         </div>
-
     </div>
 
 

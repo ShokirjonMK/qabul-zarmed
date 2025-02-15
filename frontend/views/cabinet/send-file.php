@@ -21,7 +21,8 @@ if ($student->edu_type_id == 2) {
         'title' => Yii::t("app", "a86"),
         'button' => Yii::t("app", "a88"),
         'upload_url' => 'file/create-tr',
-        'delete_url' => 'file/del-tr'
+        'delete_url' => 'file/del-tr',
+        'text' => false
     ];
 } elseif ($student->edu_type_id == 3) {
     $documents[] = [
@@ -29,7 +30,8 @@ if ($student->edu_type_id == 2) {
         'title' => Yii::t("app", "a148"),
         'button' => Yii::t("app", "a150"),
         'upload_url' => 'file/create-dtm',
-        'delete_url' => 'file/del-dtm'
+        'delete_url' => 'file/del-dtm',
+        'text' => false
     ];
 } elseif ($student->edu_type_id == 4) {
     $documents[] = [
@@ -37,7 +39,8 @@ if ($student->edu_type_id == 2) {
         'title' => Yii::t("app", "a148"),
         'button' => Yii::t("app", "a150"),
         'upload_url' => 'file/create-dtm',
-        'delete_url' => 'file/del-dtm'
+        'delete_url' => 'file/del-dtm',
+        'text' => false
     ];
 }
 
@@ -47,7 +50,8 @@ if ($eduDirection->is_oferta == 1) {
         'title' => Yii::t("app", "a127"),
         'button' => Yii::t("app", "a128"),
         'upload_url' => 'file/create-oferta',
-        'delete_url' => 'file/del-oferta'
+        'delete_url' => 'file/del-oferta',
+        'text' => 'Prezidentning 2022-yil 22-iyundagi PQ-289-son qaroriga muvofiq pedagogika sohasidagi ta’lim yo‘nalishlariga sirtqi ta’lim shakli bo‘yicha o‘qishga ta’lim tizimida pedagogik faoliyatga oid kamida besh yillik ish stajiga ega bo‘lgan shaxslar qabul qilinadi.'
     ];
 }
 
@@ -64,6 +68,14 @@ function renderDocumentBox($document) {
                     <h5><span></span> <?= $document['title'] ?></h5>
                 </div>
             </div>
+            <?php if ($document['text']) : ?>
+                <div class="cfile_box_content_question">
+                    <p>
+                        <span><i class="fa-solid fa-exclamation"></i></span>
+                        <?= $document['text'] ?>
+                    </p>
+                </div>
+            <?php endif; ?>
             <?php if ($document['model']->file_status == 0) : ?>
                 <div class="cfile_box_content_upload">
                     <?= Html::a($document['button'], Url::to([$document['upload_url'], 'id' => $document['model']->id]), [

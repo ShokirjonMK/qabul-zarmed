@@ -8,7 +8,7 @@ use common\models\EduYearType;
 
 $user = Yii::$app->user->identity;
 $role = $user->authItem;
-$logo = "/frontend/web/images/sarbon_icon.svg";
+$logo = "/frontend/web/images/logo_blue.svg";
 
 function getActive($cont, $act)
 {

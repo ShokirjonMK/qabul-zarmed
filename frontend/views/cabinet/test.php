@@ -69,11 +69,11 @@ $direction = $student->direction;
 
                                 <?php if (count($examSubjects) > 0) : ?>
                                     <?php foreach ($examSubjects as $examSubject) : ?>
+                                        <?php $directionSubject = $examSubject->directionSubject ?>
                                         <?php $subjectQuestions = $examSubject->studentQuestions; ?>
-                                        <?php $qCount = count($subjectQuestions); ?>
                                         <?php $startCount = '-'; ?>
                                         <?php $endCount = '-'; ?>
-                                        <?php if ($qCount > 0) : ?>
+                                        <?php if ($directionSubject->count > 0) : ?>
                                             <?php $i = 0; ?>
                                             <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
                                                 <?php
@@ -88,14 +88,14 @@ $direction = $student->direction;
                                         <?php endif; ?>
                                         <p class="subject-title"><?= $examSubject->subject['name_'.$lang] ?></p>
                                         <div class="subject-info">
-                                            <p><span>Savollar soni: <?= $qCount ?> ta &nbsp; | &nbsp; <?= $startCount ?>-<?= $endCount ?> gacha</span></p>
-                                            <p><span>Har bir savolga beriladigan bal: <?= $examSubject->ball ?></span></p>
+                                            <p><span>Savollar soni: <?= $directionSubject->count ?> ta &nbsp; | &nbsp; <?= $startCount ?>-<?= $endCount ?> gacha</span></p>
+                                            <p><span>Har bir savolga beriladigan bal: <?= $directionSubject->ball ?></span></p>
                                         </div>
-                                        <?php if ($qCount > 0) : ?>
+                                        <?php if ($directionSubject->count > 0) : ?>
                                             <div class="subject-question-number">
                                                 <ul>
                                                     <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
-                                                        <li id="order1_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
+                                                        <li id="order_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
                                                         <span>
                                                             <a href="#"><?= $subjectQuestion->order; ?></a>
                                                         </span>
@@ -252,7 +252,7 @@ $direction = $student->direction;
                                             <div class="subject-question-number">
                                                 <ul>
                                                     <?php foreach ($subjectQuestions as $subjectQuestion) : ?>
-                                                        <li id="order1_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
+                                                        <li data-order="<?= $subjectQuestion->order; ?>" id="order1_<?= $subjectQuestion->order; ?>" class="<?php if ($subjectQuestion->option_id != null) { echo "active";} ?>">
                                                         <span>
                                                             <a href="#"><?= $subjectQuestion->order; ?></a>
                                                         </span>

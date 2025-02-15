@@ -137,8 +137,7 @@ class Test extends Model
     {
         $model->status = self::FINISHED;
         $examSubjects = $model->examSubjects;
-        $direction = $model->direction;
-        $student = $model->student;
+        $direction = $model->eduDirection;
 
         $model->ball = 0;
         foreach ($examSubjects as $examSubject) {
@@ -161,24 +160,9 @@ class Test extends Model
             $examSubject->save(false);
         }
 
-//        if ($model->ball < 56.7 && $model->ball >= 10) {
-//            $model->ball = rand(57 , 65);
-//            $model->contract_type = 1;
-//            $model->contract_price = $direction->contract;
-//        } elseif ($model->ball < 10) {
-//            $model->contract_type = 1.5;
-//            $model->contract_price = $direction->contract * 1.5;
-//        } elseif ($model->ball >= 56.7) {
-//            $model->contract_type = 1;
-//            $model->contract_price = $direction->contract;
-//        }
-
-//        $model->confirm_date = time();
+        $model->contract_price = $direction->price;
+        $model->confirm_date = time();
         $model->save(false);
-//        $text = "Tabriklaymiz! Siz “GLOBAL SOFTLINE UNIVERSITY”ga talabalikka tavsiya etildingiz. To'lov shartnomasini yuklab olishni unutmang. Shartnomangizni https://qabul.tpu.uz sayti orqali yuklab oling. Aloqa markazi: 77 129 29 29. Rasmiy telegram kanal: https://t.me/perfect_university";
-//        $phone = $student->user->username;
-//        Message::sendedSms($phone , $text);
-
         return $model;
     }
 

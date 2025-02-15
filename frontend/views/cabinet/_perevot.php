@@ -14,8 +14,9 @@ use common\models\Course;
 
 $lang = Yii::$app->language;
 $direction = $student->direction;
-$oferta = StudentOferta::findOne(['student_id' => $student->id, 'direction_id' => $student->direction_id, 'status' => 1, 'is_deleted' => 0]);
-$perevot = StudentPerevot::findOne(['student_id' => $student->id, 'direction_id' => $student->direction_id, 'status' => 1, 'is_deleted' => 0]);
+$eduDirection = $student->eduDirection;
+$oferta = StudentOferta::findOne(['student_id' => $student->id, 'edu_direction_id' => $student->edu_direction_id, 'status' => 1, 'is_deleted' => 0]);
+$perevot = StudentPerevot::findOne(['student_id' => $student->id, 'edu_direction_id' => $student->edu_direction_id, 'status' => 1, 'is_deleted' => 0]);
 $courseId = $student->course_id + 1;
 $course = Course::findOne($courseId);
 ?>
@@ -27,16 +28,14 @@ $course = Course::findOne($courseId);
             <div class="down_title">
                 <h6><i class="fa-brands fa-slack"></i> &nbsp;&nbsp; <?= $direction->code." - ".$direction['name_'.$lang] ?></h6>
             </div>
-
             <div class="down_content">
-
                 <div class="down_content_box">
                     <div class="down_content_box_left">
                         <i class="fa-regular fa-bookmark"></i>
                     </div>
                     <div class="down_content_box_right">
                         <p><?= Yii::t("app" , "a80") ?></p>
-                        <h6><?= $direction->eduType['name_'.$lang] ?></h6>
+                        <h6><?= $eduDirection->eduType['name_'.$lang] ?></h6>
                     </div>
                 </div>
 
@@ -46,7 +45,7 @@ $course = Course::findOne($courseId);
                     </div>
                     <div class="down_content_box_right">
                         <p><?= Yii::t("app" , "a59") ?></p>
-                        <h6><?= $direction->language['name_'.$lang] ?></h6>
+                        <h6><?= $eduDirection->lang['name_'.$lang] ?></h6>
                     </div>
                 </div>
 
@@ -56,7 +55,7 @@ $course = Course::findOne($courseId);
                     </div>
                     <div class="down_content_box_right">
                         <p><?= Yii::t("app" , "a60") ?></p>
-                        <h6><?= $direction->eduForm['name_'.$lang] ?></h6>
+                        <h6><?= $eduDirection->eduForm['name_'.$lang] ?></h6>
                     </div>
                 </div>
 
@@ -88,9 +87,10 @@ $course = Course::findOne($courseId);
                             <p><?= Yii::t("app" , "a85") ?></p>
                         </div>
                     <?php endif; ?>
+
                     <div class="cfile_box_head">
                         <div class="cfile_box_head_left">
-                            <h5> <span></span> <?= Yii::t("app" , "a86") ?></h5>
+                            <h5><span></span> <?= Yii::t("app" , "a86") ?></h5>
                         </div>
                     </div>
 
@@ -98,7 +98,6 @@ $course = Course::findOne($courseId);
                         <div class="cfile_box_content_question">
                             <p><span><i class="fa-solid fa-question"></i></span> <?= Yii::t("app" , "a87") ?></p>
                         </div>
-
                         <div class="cfile_box_content_upload">
                             <?php
                             $url = Url::to(['file/create-tr', 'id' => $perevot->id]);
@@ -136,7 +135,7 @@ $course = Course::findOne($courseId);
                     <?php endif; ?>
                 </div>
 
-                <?php if ($direction->oferta == 1) : ?>
+                <?php if ($eduDirection->is_oferta == 1) : ?>
 
                     <div class="cfile_box">
                         <?php if ($oferta->file_status == 0) : ?>
@@ -162,13 +161,13 @@ $course = Course::findOne($courseId);
                             </div>
                         </div>
 
-                        <?php if ($oferta->file_status == 0) : ?>
-                            <div class="cfile_box_content_question">
-                                <p><span><i class="fa-solid fa-question"></i></span>
-                                    <?= Yii::t("app" , "a92") ?>
-                                </p>
-                            </div>
+                        <div class="cfile_box_content_question">
+                            <p><span><i class="fa-solid fa-question"></i></span>
+                                <?= Yii::t("app" , "a92") ?>
+                            </p>
+                        </div>
 
+                        <?php if ($oferta->file_status == 0) : ?>
                             <div class="cfile_box_content_upload">
                                 <?php
                                 $url = Url::to(['file/create-oferta', 'id' => $oferta->id]);
@@ -216,15 +215,8 @@ $course = Course::findOne($courseId);
     <div class="modal fade" id="studentSerOfertaDelete" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="ikmodel">
-                    <div class="ikmodel_item">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="studentSerOfertaDeleteBody">
+                <div class="modal-body" id="studentSerOfertaDeleteBody">
 
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -233,15 +225,8 @@ $course = Course::findOne($courseId);
     <div class="modal fade" id="studentOfertaCreate" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="ikmodel">
-                    <div class="ikmodel_item">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="studentOfertaCreateBody">
+                <div class="modal-body" id="studentOfertaCreateBody">
 
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -250,15 +235,8 @@ $course = Course::findOne($courseId);
     <div class="modal fade" id="studentTrCreate" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="ikmodel">
-                    <div class="ikmodel_item">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="studentTrCreateBody">
+                <div class="modal-body" id="studentTrCreateBody">
 
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -267,15 +245,8 @@ $course = Course::findOne($courseId);
     <div class="modal fade" id="studentTrDelete" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="ikmodel">
-                    <div class="ikmodel_item">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="studentTrDeleteBody">
+                <div class="modal-body" id="studentTrDeleteBody">
 
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

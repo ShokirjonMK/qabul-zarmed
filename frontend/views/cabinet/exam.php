@@ -81,7 +81,7 @@ if ($eduDirection->is_oferta == 1) {
                     </div>
                 </div>
 
-                <div class="col-md-4 col-12">
+                <div class="col-md-4 col-12 mb-4">
                     <div class="ika_column">
                         <p>Imtixon turi</p>
                         <h6><?= Status::getExamStatus($student->exam_type); ?></h6>
@@ -111,6 +111,15 @@ if ($eduDirection->is_oferta == 1) {
                         </h6>
                     </div>
                 </div>
+
+                <?php if ($exam->status == 3): ?>
+                    <div class="col-md-4 col-12 mb-4">
+                        <div class="ika_column">
+                            <p>To'plangan ball</p>
+                            <h6><?= $exam->ball ?> ball</h6>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="col-md-4 col-12 mb-4">
                     <div class="ika_column">
@@ -206,9 +215,11 @@ if ($eduDirection->is_oferta == 1) {
                             </a>
                         </div>
                     <?php else: ?>
-                        <div class="ika_danger top30">
-                            <h6><i class="fa-solid fa-exclamation"></i> <span>Imtixonda qatnashish uchun 5 yillik staj fayl tasdiqlanishini kuting.</span></h6>
-                        </div>
+                <div class="col-md-12 col-12">
+                    <div class="ika_danger top30">
+                        <h6><i class="fa-solid fa-exclamation"></i> <span>Imtixonda qatnashish uchun 5 yillik staj fayl tasdiqlanishini kuting.</span></h6>
+                    </div>
+                </div>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
@@ -231,11 +242,11 @@ if ($eduDirection->is_oferta == 1) {
                                     <h5>&nbsp; <span></span> &nbsp;&nbsp;  <?= Yii::t("app", "a127") ?></h5>
                                 </div>
                             </div>
+                            <div class="cfile_box_content_question">
+                                <p><span><i class="fa-solid fa-exclamation"></i></span>
+                                    Prezidentning 2022-yil 22-iyundagi PQ-289-son qaroriga muvofiq pedagogika sohasidagi ta’lim yo‘nalishlariga sirtqi ta’lim shakli bo‘yicha o‘qishga ta’lim tizimida pedagogik faoliyatga oid kamida besh yillik ish stajiga ega bo‘lgan shaxslar qabul qilinadi.                            </p>
+                            </div>
                             <?php if ($oferta->file_status == 0) : ?>
-                                <div class="cfile_box_content_question">
-                                    <p><span><i class="fa-solid fa-exclamation"></i></span>
-                                        Prezidentning 2022-yil 22-iyundagi PQ-289-son qaroriga muvofiq pedagogika sohasidagi ta’lim yo‘nalishlariga sirtqi ta’lim shakli bo‘yicha o‘qishga ta’lim tizimida pedagogik faoliyatga oid kamida besh yillik ish stajiga ega bo‘lgan shaxslar qabul qilinadi.                            </p>
-                                </div>
                                 <div class="cfile_box_content_upload">
                                     <?= Html::a(Yii::t("app", "a128"), Url::to(['file/create-oferta', 'id' => $oferta->id]), [
                                         "data-bs-toggle" => "modal",

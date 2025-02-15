@@ -32,51 +32,44 @@ class StepThreeTwo extends Model
 
             [['edu_name' , 'edu_direction'], 'string' , 'max' => 255],
 
-            [['filial_id'], 'exist',
-                'skipOnError' => true,
-                'targetClass' => Branch::class,
-                'targetAttribute' => ['filial_id' => 'id'],
-                'filter' => ['status' => 1, 'is_deleted' => 0],
-                'message' => 'Tanlangan filial mavjud emas.'
-            ],
-            [['lang_id'], 'exist',
-                'skipOnError' => true,
-                'targetClass' => Lang::class,
-                'targetAttribute' => ['lang_id' => 'id'],
-                'filter' => ['status' => 1, 'is_deleted' => 0],
-                'message' => 'Tanlangan filial mavjud emas.'
-            ],
-            [['edu_direction_id'], 'exist',
-                'skipOnError' => true,
-                'targetClass' => EduDirection::class,
-                'targetAttribute' => ['edu_direction_id' => 'id'],
-                'filter' => [
+            [['filial_id'], function ($attribute) {
+                if (!Branch::find()->where(['id' => $this->$attribute, 'status' => 1, 'is_deleted' => 0])->exists()) {
+                    $this->addError($attribute, 'Tanlangan filial mavjud emas.');
+                }
+            }],
+            [['lang_id'], function ($attribute) {
+                if (!Lang::find()->where(['id' => $this->$attribute, 'status' => 1, 'is_deleted' => 0])->exists()) {
+                    $this->addError($attribute, 'Tanlangan til mavjud emas.');
+                }
+            }],
+            [['edu_form_id'], function ($attribute) {
+                if (!EduForm::find()->where(['id' => $this->$attribute, 'status' => 1, 'is_deleted' => 0])->exists()) {
+                    $this->addError($attribute, 'Tanlangan taʼlim shakli mavjud emas.');
+                }
+            }],
+            [['edu_direction_id'], function ($attribute) {
+                if (!EduDirection::find()->where([
+                    'id' => $this->$attribute,
                     'edu_form_id' => $this->edu_form_id,
                     'edu_type_id' => $this->edu_type_id,
                     'lang_id' => $this->lang_id,
                     'status' => 1,
-                    'is_deleted' => 0,
-                ],
-                'message' => 'Tanlangan ta\'lim yo\'nalishi mavjud emas.'
-            ],
-            [['edu_form_id'], 'exist',
-                'skipOnError' => true,
-                'targetClass' => EduForm::class,
-                'targetAttribute' => ['edu_form_id' => 'id'],
-                'filter' => ['status' => 1, 'is_deleted' => 0],
-                'message' => 'Tanlangan ta\'lim shakli mavjud emas.'
-            ],
-            [['direction_course_id'], 'exist',
-                'skipOnError' => true,
-                'targetClass' => DirectionCourse::class,
-                'targetAttribute' => ['direction_course_id' => 'id'],
-                'filter' => [
+                    'is_deleted' => 0
+                ])->exists()) {
+                    $this->addError($attribute, 'Tanlangan taʼlim yo‘nalishi mavjud emas.');
+                }
+            }],
+
+            [['direction_course_id'], function ($attribute) {
+                if (!DirectionCourse::find()->where([
+                    'id' => $this->$attribute,
                     'edu_direction_id' => $this->edu_direction_id,
                     'status' => 1,
                     'is_deleted' => 0
-                ],
-                'message' => 'Tanlangan bosqich mavjud emas.'
-            ],
+                ])->exists()) {
+                    $this->addError($attribute, 'Tanlangan taʼlim yo‘nalishi mavjud emas.');
+                }
+            }],
         ];
     }
 
@@ -117,13 +110,14 @@ class StepThreeTwo extends Model
 
         if ($student->edu_direction_id != $this->edu_direction_id || $student->direction_course_id != $this->direction_course_id) {
             $eduDirection = EduDirection::findOne($this->edu_direction_id);
+            $directionCourse = DirectionCourse::findOne($this->direction_course_id);
             $student->setAttributes([
                 'lang_id' => $this->lang_id,
                 'edu_form_id' => $this->edu_form_id,
                 'edu_direction_id' => $this->edu_direction_id,
                 'direction_id' => $eduDirection->direction_id,
                 'direction_course_id' => $this->direction_course_id,
-                'course_id' => $this->directionCourse->course_id,
+                'course_id' => $directionCourse->course_id,
             ]);
 
             $result = StepThree::createEduType($student);

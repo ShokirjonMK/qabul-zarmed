@@ -24,6 +24,10 @@ use Yii;
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $is_deleted
+ * @property float|null $contract_price
+ * @property float|null $invois
+ * @property int|null $down_time
+ * @property int|null $confirm_date
  *
  * @property Direction $direction
  * @property EduDirection $eduDirection
@@ -166,5 +170,14 @@ class Exam extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $micTime = (int) round(microtime(true) * 1000);
+            $this->invois = $micTime;
+        }
+        return parent::beforeSave($insert);
     }
 }

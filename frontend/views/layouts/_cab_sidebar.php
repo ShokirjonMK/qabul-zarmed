@@ -1,4 +1,6 @@
-
+<?php
+/** @var \common\models\Student $student */
+?>
 <div class="ika_content_left_item">
     <div class="sidebar-top">
         <div class="sidebar-left-right">
@@ -6,8 +8,8 @@
                 <i class="fa-solid fa-user-tie"></i>
             </div>
             <div class="sidebar-right">
-                <h6 class="mt-1">URAIMOV IQBOLJON ANVARJON O'G'LI</h6>
-                <p class="mt-1">ID: <span>&nbsp; 26</span></p>
+                <h6 class="mt-1"><?= $student->fullName ?></h6>
+                <p class="mt-1">ID: <span>&nbsp; <?= $student->user_id ?></span></p>
             </div>
         </div>
     </div>
@@ -20,12 +22,14 @@
                 </a>
             </li>
 
-            <li>
-                <a href="/cabinet/exam" class="<?= getActive('cabinet', 'exam') ?>">
-                    <span><i class="bi bi-graph-up"></i></span>
-                    <span class="sidebar-link-test">Imtixon</span>
-                </a>
-            </li>
+            <?php if ($student->edu_type_id == 1) : ?>
+                <li>
+                    <a href="/cabinet/exam" class="<?= getActive('cabinet', 'exam') ?>">
+                        <span><i class="bi bi-graph-up"></i></span>
+                        <span class="sidebar-link-test">Imtixon</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <li>
                 <a href="/cabinet/payments" class="<?= getActive('cabinet', 'index1') ?>">
@@ -42,7 +46,7 @@
             </li>
 
             <li>
-                <a href="/cabinet/sign-out" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+                <a href="/site/logout" data-method="post">
                     <span><i class="bi bi-box-arrow-right"></i></span>
                     <span class="sidebar-link-test">Kabinetdan chiqish</span>
                 </a>

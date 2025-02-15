@@ -18,7 +18,6 @@ use common\models\Branch;
 /** @var $id */
 
 $lang = Yii::$app->language;
-
 $languages = Lang::find()->where(['is_deleted' => 0 , 'status' => 1])->all();
 $eduForms = EduForm::find()->where(['is_deleted' => 0 , 'status' => 1])->all();
 

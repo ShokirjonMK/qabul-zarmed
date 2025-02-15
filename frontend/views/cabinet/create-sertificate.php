@@ -15,7 +15,7 @@ use yii\bootstrap5\Html;
 </div>
 
 
-<div class="d-flex justify-content-around align-items-center top40">
+<div class="d-flex justify-content-around align-items-center top30">
     <?= Html::button(Yii::t("app" , "a73"), ['class' => 'step_left_btn step_btn', 'data-bs-dismiss' => 'modal']) ?>
     <?= Html::submitButton(Yii::t("app" , "a52"), ['class' => 'step_right_btn step_btn', 'name' => 'login-button']) ?>
 </div>

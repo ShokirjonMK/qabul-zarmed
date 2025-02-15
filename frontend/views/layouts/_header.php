@@ -7,9 +7,14 @@ $languages = Languages::find()->where(['is_deleted' => 0, 'status' => 1])->all()
 $lang = Yii::$app->language;
 $langMap = ['uz' => 1, 'en' => 2, 'ru' => 3];
 $langId = $langMap[$lang] ?? 1;
+$con = Yii::$app->controller->id;
 
 $user = !Yii::$app->user->isGuest ? Yii::$app->user->identity : null;
 $student = $user ? Student::findOne(['user_id' => $user->id]) : null;
+$isConfirm = false;
+if ($student && $user->step = 5) {
+    $isConfirm = $student->isConfirm;
+}
 $flagMap = [
     1 => 'uzb.png',
     2 => 'eng1.png',
@@ -79,12 +84,23 @@ $flagMap = [
                             <span><?= Yii::t("app", "a3") ?></span>
                         </a>
                     </li>
-                    <li>
-                        <a href="<?= Url::to([$user ? 'cabinet/index' : 'site/login']) ?>">
-                            <i class="fa-solid fa-user"></i>
-                            <span><?= Yii::t("app", $user ? "Kabinetga kirish" : "a4") ?></span>
-                        </a>
-                    </li>
+                    <?php if ($con != "cabinet"): ?>
+                        <li>
+                            <a href="<?= Url::to([$user ? 'cabinet/index' : 'site/login']) ?>">
+                                <i class="fa-solid fa-user"></i>
+                                <span><?= Yii::t("app", $user ? "Kabinetga kirish" : "a4") ?></span>
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <?php if ($isConfirm) : ?>
+                            <li>
+                                <a href="<?= Url::to(['cabinet/contract']) ?>">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span><?= Yii::t("app",  "Shartnoma") ?></span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </ul>
             </div>
 

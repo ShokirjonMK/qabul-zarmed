@@ -710,19 +710,18 @@
 
 .file_box {
     width: 100%;
-    margin-top: 80px;
 }
 .upload_file {
     padding: 10px;
     text-align: center;
     display: block;
     background: var(--col2);
-    border-radius: 15px;
+    border-radius: 5px;
     cursor: pointer;
     border: 1px dashed var(--border);
 }
 .upload_file .upload_icon {
-    color: var(--logo-color);
+    color: var(--bg-color);
     font-size: 45px;
 }
 .upload_file div {

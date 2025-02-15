@@ -86,7 +86,7 @@ $postion = $user->authItem->description;
         <div class="education-name">
             <h2>
                 <a href="/">
-                    <?= Yii::$app->params['univer_name'] ?>
+                    ZARMED UNIVERSITETI
                 </a>
             </h2>
         </div>

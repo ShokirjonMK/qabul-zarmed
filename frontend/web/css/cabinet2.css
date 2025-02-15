@@ -252,12 +252,12 @@
 
 .page-card {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 5px;
     background: #fff;
     padding: 2px;
 }
 .page-card-item {
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid var(--bg);
 }
 
@@ -359,7 +359,7 @@
     justify-content: center;
     align-items: center;
     border: 1px solid #fff;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .inputDiv input:checked ~ label .option-label-left {
@@ -594,7 +594,9 @@ label.falseAnswer .option-label-left {
         display: none;
         /*margin-top: 25px;*/
     }
-
+    .ika_content {
+        padding: 30px 0;
+    }
 }
 
 @media screen and (max-width: 576px){
@@ -633,7 +635,7 @@ label.falseAnswer .option-label-left {
     }
     .test-hour h1 {
         font-size: 40px;
-        -webkit-text-stroke: 0.2vw var(--color-blue);
+        -webkit-text-stroke: 0.2vw var(--bg-color);
     }
 
     .test-time h6,
@@ -643,7 +645,7 @@ label.falseAnswer .option-label-left {
         font-weight: bold;
         color: #fff;
         text-align: center;
-        -webkit-text-stroke: 0.2vw var(--color-blue);
+        -webkit-text-stroke: 0.2vw var(--bg-color);
         opacity: 1;
     }
     .test-time-item-left {
@@ -656,7 +658,9 @@ label.falseAnswer .option-label-left {
     .ika_user_page_item ul li {
         font-size: 12px;
     }
-
+    .ika_content {
+        padding: 20px 0;
+    }
 
 }
 
@@ -665,7 +669,7 @@ label.falseAnswer .option-label-left {
     .mobile-test-time h6
     {
         font-size: 16px;
-        -webkit-text-stroke: 0.2vw var(--color-blue);
+        -webkit-text-stroke: 0.2vw var(--bg-color);
     }
     .test-time-item-center {
         width: calc(100% - 100px);

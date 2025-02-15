@@ -59,7 +59,6 @@ class CabinetController extends Controller
         ];
     }
 
-
 //    public function beforeAction($action)
 //    {
 //        if (!Yii::$app->user->isGuest) {
@@ -79,7 +78,6 @@ class CabinetController extends Controller
 //        return parent::beforeAction($action);
 //    }
 
-
     public function actions()
     {
         return [
@@ -92,7 +90,6 @@ class CabinetController extends Controller
             ],
         ];
     }
-
 
     public function actionIndex()
     {
@@ -134,7 +131,6 @@ class CabinetController extends Controller
         ]);
     }
 
-
     public function actionExam()
     {
         $user = Yii::$app->user->identity;
@@ -168,7 +164,6 @@ class CabinetController extends Controller
             'dataProvider' => $dataProvider,
             'student' => $student
         ]);
-
     }
 
     public function actionFinish($id)
@@ -188,17 +183,15 @@ class CabinetController extends Controller
     {
         $this->layout = '_cabinet-step';
         $errors = [];
-        $t = false;
 
         $user = Yii::$app->user->identity;
         $student = Student::findOne(['user_id' => $user->id]);
 
-        if ($t) {
+        if ($user->step > 4) {
             $errors[] = ['Ma\'lumotni tahrirlay olmaysiz'];
             Yii::$app->session->setFlash('error' , $errors);
             return $this->redirect(['cabinet/index']);
         }
-
 
         if ($id == null) {
             $id = $user->step;
@@ -244,7 +237,6 @@ class CabinetController extends Controller
                 return $this->redirect(['step']);
             }
         }
-
 
         return $this->render('step' , [
             'id' => $id,

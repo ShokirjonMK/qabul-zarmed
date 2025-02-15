@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\EduDirection;
+use common\models\StudentMaster;
 use frontend\controllers\ActionTrait;
 use common\models\Direction;
 use common\models\DirectionCourse;
@@ -452,6 +453,69 @@ class FileController extends Controller
             return $this->renderAjax('create-sertificate', [
                 'model' => $model,
                 'examSubject' => $examSubject
+            ]);
+        }
+    }
+
+
+    public function actionDelMaster($id)
+    {
+        $user = Yii::$app->user->identity;
+        $student = Student::findOne(['user_id' => $user->id]);
+
+        $query = StudentMaster::findOne([
+            'id' => $id,
+            'student_id' => $student->id,
+            'edu_direction_id' => $student->edu_direction_id,
+            'status' => 1,
+            'is_deleted' => 0
+        ]);
+
+        if ($query) {
+            $model = new SerDel();
+            if ($model->load(Yii::$app->request->post())) {
+                $result = SerDel::upload($model , $student , $query);
+                if ($result['is_ok']) {
+                    Yii::$app->session->setFlash('success');
+                } else {
+                    Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            return $this->renderAjax('delete-sertificate', [
+                'model' => $model,
+                'query' => $query
+            ]);
+        }
+    }
+
+    public function actionCreateMaster($id)
+    {
+        $user = Yii::$app->user->identity;
+        $student = Student::findOne(['user_id' => $user->id]);
+
+        $query = StudentMaster::findOne([
+            'id' => $id,
+            'student_id' => $student->id,
+            'edu_direction_id' => $student->edu_direction_id,
+            'status' => 1,
+            'is_deleted' => 0
+        ]);
+
+        if ($query) {
+            $model = new SerCreate();
+            if ($model->load(Yii::$app->request->post())) {
+                $result = SerCreate::upload($model , $student , $query);
+                if ($result['is_ok']) {
+                    Yii::$app->session->setFlash('success');
+                } else {
+                    Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            return $this->renderAjax('create-sertificate', [
+                'model' => $model,
+                'examSubject' => $query
             ]);
         }
     }
