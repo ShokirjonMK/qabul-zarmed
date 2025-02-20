@@ -10,6 +10,7 @@ use common\models\Lang;
 use common\models\Student;
 use common\models\User;
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "student_oferta".
@@ -41,6 +42,9 @@ use Yii;
  */
 class StudentOferta extends \yii\db\ActiveRecord
 {
+    public $file_pdf;
+    public $fileMaxSize = 1024 * 1000 * 5;
+
     /**
      * {@inheritdoc}
      */
@@ -57,6 +61,13 @@ class StudentOferta extends \yii\db\ActiveRecord
         return [
             [['user_id', 'student_id', 'edu_direction_id', 'direction_id', 'language_id', 'edu_type_id', 'edu_form_id', 'file_status', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'is_deleted'], 'integer'],
             [['file'], 'string', 'max' => 255],
+            [
+                ['file_pdf'],
+                'file',
+                'extensions' => 'pdf',
+                'skipOnEmpty' => true,
+                'maxSize' => $this->fileMaxSize
+            ],
             [['direction_id'], 'exist', 'skipOnError' => true, 'targetClass' => Direction::class, 'targetAttribute' => ['direction_id' => 'id']],
             [['edu_direction_id'], 'exist', 'skipOnError' => true, 'targetClass' => EduDirection::class, 'targetAttribute' => ['edu_direction_id' => 'id']],
             [['edu_form_id'], 'exist', 'skipOnError' => true, 'targetClass' => EduForm::class, 'targetAttribute' => ['edu_form_id' => 'id']],
@@ -160,5 +171,46 @@ class StudentOferta extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public static function upload($model) {
+        $transaction = Yii::$app->db->beginTransaction();
+        $errors = [];
+
+        if (!$model->validate()) {
+            $errors[] = $model->simple_errors($model->errors);
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
+
+        if ($model->file_status == 2) {
+            $errors[] = ['Avval yuklangan fayl tasdiqlangan'];
+        } else {
+            $photoFile = UploadedFile::getInstance($model, 'file_pdf');
+            if ($photoFile) {
+                if (isset($photoFile->size)) {
+                    $photoFolderName = '@frontend/web/uploads/'. $model->student_id .'/';
+                    if (!file_exists(\Yii::getAlias($photoFolderName))) {
+                        mkdir(\Yii::getAlias($photoFolderName), 0777, true);
+                    }
+                    $photoName = $model->student_id ."_". time() . \Yii::$app->security->generateRandomString(20). '.' . $photoFile->extension;
+                    if ($photoFile->saveAs($photoFolderName."/".$photoName)) {
+                        $model->file = $photoName;
+                        $model->file_status = 1;
+                        $model->save(false);
+                    }
+                }
+            } else {
+                $errors[] = ['Fayl yuborilmadi!'];
+            }
+        }
+
+        if (count($errors) == 0) {
+            $transaction->commit();
+            return ['is_ok' => true];
+        }else {
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
     }
 }

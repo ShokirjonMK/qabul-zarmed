@@ -38,7 +38,6 @@ $this->title = 'GLOBAL SOFTLINE UNIVERSITY';
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

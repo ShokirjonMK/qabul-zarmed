@@ -40,7 +40,7 @@ class StepOne extends Model
     {
         $transaction = Yii::$app->db->beginTransaction();
         $errors = [];
-        $pin = $student->passport_pin;
+        $pinfl = $student->passport_pin;
 
         if (!$this->validate()) {
             $errors[] = $this->simple_errors($this->errors);
@@ -48,65 +48,67 @@ class StepOne extends Model
             return ['is_ok' => false , 'errors' => $errors];
         }
 
-        $url = 'https://subsidiya.idm.uz/api/applicant/get-photo';
+        if ($pinfl != $this->jshshr) {
 
-        $data = json_encode([
-            'pinfl' => $this->jshshr
-        ]);
+            self::deleteNull($student->id);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Basic ' . base64_encode('ikbol:ikbol123321')
-        ]);
+            $url = 'https://subsidiya.idm.uz/api/applicant/get-photo';
 
-        $response = curl_exec($ch);
-        $response = json_decode($response, true);
-        curl_close($ch);
-        $photoBase64 = $response['data']['photo'] ?? null;
+            $data = json_encode([
+                'pinfl' => $this->jshshr
+            ]);
 
-        if ($photoBase64) {
-            $pin = $response['data']['pinfl'] ?? null;
-            $seria = $response['data']['docSeria'] ?? null;
-            $number = $response['data']['docNumber'] ?? null;
-            $last_name = $response['data']['surnameLatin'] ?? null;
-            $first_name = $response['data']['nameLatin'] ?? null;
-            $middle_name = $response['data']['patronymLatin'] ?? null;
-            $birthday = $response['data']['birthDate'] ?? null;
-            $b_date = $response['data']['docDateBegin'] ?? null;
-            $e_date = $response['data']['docDateEnd'] ?? null;
-            $given_by = $response['data']['docGivePlace'] ?? null;
-            $jins = $response['data']['sex'] ?? null;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Basic ' . base64_encode('ikbol:ikbol123321')
+            ]);
 
-            $student->first_name = $first_name;
-            $student->last_name = $last_name;
-            $student->middle_name = $middle_name;
-            $student->passport_number = $number;
-            $student->passport_serial = $seria;
-            $student->passport_pin = $pin;
+            $response = curl_exec($ch);
+            $response = json_decode($response, true);
+            curl_close($ch);
+            $photoBase64 = $response['data']['photo'] ?? null;
 
-            $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
-            $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
-            $student->passport_given_by = $given_by;
-            $student->birthday = $birthday;
-            $student->gender = $jins;
-            if (!$student->validate()){
-                $errors[] = $this->simple_errors($student->errors);
-            } else {
-                $student->update(false);
-                $user->step = 2;
-                $user->update(false);
-                if ($student->passport_pin != $pin) {
-                    self::deleteNull($student->id);
+            if ($photoBase64) {
+                $pin = $response['data']['pinfl'] ?? null;
+                $seria = $response['data']['docSeria'] ?? null;
+                $number = $response['data']['docNumber'] ?? null;
+                $last_name = $response['data']['surnameLatin'] ?? null;
+                $first_name = $response['data']['nameLatin'] ?? null;
+                $middle_name = $response['data']['patronymLatin'] ?? null;
+                $birthday = $response['data']['birthDate'] ?? null;
+                $b_date = $response['data']['docDateBegin'] ?? null;
+                $e_date = $response['data']['docDateEnd'] ?? null;
+                $given_by = $response['data']['docGivePlace'] ?? null;
+                $jins = $response['data']['sex'] ?? null;
+
+                $student->first_name = $first_name;
+                $student->last_name = $last_name;
+                $student->middle_name = $middle_name;
+                $student->passport_number = $number;
+                $student->passport_serial = $seria;
+                $student->passport_pin = $pin;
+
+                $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
+                $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
+                $student->passport_given_by = $given_by;
+                $student->birthday = $birthday;
+                $student->gender = $jins;
+                if (!$student->validate()){
+                    $errors[] = $this->simple_errors($student->errors);
                 }
+            } else {
+                $errors[] = ['Ma\'lumotlarni olishda xatolik yuz berdi.'];
             }
-        } else {
-            $errors[] = ['Ma\'lumotlarni olishda xatolik yuz berdi.'];
         }
+
+        $student->update(false);
+        $user->step = 2;
+        $user->update(false);
 
         if (count($errors) == 0) {
             $transaction->commit();
@@ -131,9 +133,10 @@ class StepOne extends Model
                 'edu_name' => null,
                 'edu_direction' => null,
                 'exam_type' => 0,
+                'branch_id' => null,
             ], ['id' => $studentId]);
 
-            foreach (['Exam', 'StudentDtm', 'StudentPerevot', 'StudentMaster'] as $table) {
+            foreach (['common\models\Exam', 'common\models\ExamSubject','common\models\StudentDtm', 'common\models\StudentPerevot', 'common\models\StudentMaster', 'common\models\StudentOferta'] as $table) {
                 if (class_exists($table)) {
                     call_user_func([$table, 'updateAll'], ['is_deleted' => 1], ['student_id' => $studentId, 'is_deleted' => 0]);
                 }

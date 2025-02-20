@@ -225,6 +225,141 @@ class Student extends \yii\db\ActiveRecord
         return $this->last_name." ".$this->first_name." ".$this->middle_name;
     }
 
+    public function getUserStatus()
+    {
+        $text = '-----';
+        $user = $this->user;
+        if ($user->status == 10) {
+            $text = 'Faol';
+        } elseif ($user->status == 9) {
+            $text = 'No faol';
+        } elseif ($user->status == 0) {
+            $text = 'Arxivlangan';
+        }
+        return $text;
+    }
+
+    public function getContractStatus() {
+        $text = 'Shartnoma olmadi';
+
+        switch ($this->edu_type_id) {
+            case 1:
+                $model = Exam::class;
+                break;
+            case 2:
+                $model = StudentPerevot::class;
+                break;
+            case 3:
+                $model = StudentDtm::class;
+                break;
+            case 4:
+                $model = StudentMaster::class;
+                break;
+            default:
+                return "<div class='badge-table-div active'><span>$text</span></div>";
+        }
+
+        $record = $model::findOne([
+            'student_id' => $this->id,
+            'edu_direction_id' => $this->edu_direction_id,
+            'is_deleted' => 0
+        ]);
+
+        if ($record) {
+            if ($model == Exam::class) {
+                if ($record->status == 3) {
+                    $text = !empty($record->down_time) ? 'Shartnoma oldi' : 'Shartnoma olmadi';
+                }
+            } else {
+                if (isset($record->file_status) && $record->file_status == 2) {
+                    $text = !empty($record->down_time) ? 'Shartnoma oldi' : 'Shartnoma olmadi';
+                }
+            }
+        }
+
+        return "<div class='badge-table-div active'><span>$text</span></div>";
+    }
+
+    public function getChalaStatus() {
+        $user = $this->user;
+        if ($user->status == 9 && $user->step > 0) {
+            $text = 'Parol tiklashda SMS parol tasdiqlamaan';
+        } elseif ($user->status == 9 && $user->step == 0) {
+            $text = 'SMS parol tasdiqlamaan';
+        } elseif ($user->step == 1) {
+            $text = 'Pasport ma\'lumotini kiritmagan';
+        } elseif ($user->step == 2) {
+            $text = 'Qabul turini tanlamagan';
+        } elseif ($user->step == 3) {
+            $text = 'Yo\'nalish tanlamagan';
+        } elseif ($user->step == 4) {
+            $text = 'Tasdiqlamagan';
+        }
+        return "<div class='badge-table-div active'><span>".$text."</span></div>";
+    }
+
+    public function getEduStatus()
+    {
+        if ($this->edu_type_id == 1) {
+            return $this->getExamStatus();
+        } elseif (in_array($this->edu_type_id, [2, 3, 4])) {
+            return $this->getPerevotStatus();
+        }
+        return "-----";
+    }
+
+    private function getExamStatus()
+    {
+        $eduExam = Exam::findOne([
+            'student_id' => $this->id,
+            'edu_direction_id' => $this->edu_direction_id,
+            'is_deleted' => 0
+        ]);
+
+        if (!$eduExam) return "-----";
+
+        $statuses = [
+            0 => "<div class='badge-table-div danger'><span>Bekor qilindi</span></div>",
+            1 => "<div class='badge-table-div active'><span>Test ishlamagan</span></div>",
+            2 => "<div class='badge-table-div active'><span>Testda</span></div>",
+            3 => $eduExam->down_time !== null
+                ? "<div class='badge-table-div active'><span>Yakunlab shartnoma oldi</span></div>"
+                : "<div class='badge-table-div active'><span>Yakunlab shartnoma olmadi</span></div>",
+        ];
+
+        return $statuses[$eduExam->status] ?? "-----";
+    }
+
+    private function getPerevotStatus()
+    {
+        $models = [
+            2 => StudentPerevot::class,
+            3 => StudentDtm::class,
+            4 => StudentMaster::class
+        ];
+
+        $modelClass = $models[$this->edu_type_id] ?? null;
+        if (!$modelClass) return "-----";
+
+        $perevot = $modelClass::findOne([
+            'student_id' => $this->id,
+            'edu_direction_id' => $this->edu_direction_id,
+            'status' => 1,
+            'is_deleted' => 0
+        ]);
+
+        if (!$perevot) return "-----";
+
+        $statuses = [
+            0 => "<div class='badge-table-div danger'><span>Yuborilmagan</span></div>",
+            1 => "<div class='badge-table-div active'><span>Kelib tushdi</span></div>",
+            2 => "<div class='badge-table-div active'><span>Tasdiqlandi</span></div>",
+            3 => "<div class='badge-table-div active'><span>Bekor qilindi</span></div>",
+        ];
+
+        return $statuses[$perevot->file_status] ?? "-----";
+    }
+
     public function getIsConfirm()
     {
         $user = Yii::$app->user->identity;
@@ -262,6 +397,57 @@ class Student extends \yii\db\ActiveRecord
         }
 
         return false;
+    }
+
+    public function getEducationStatus()
+    {
+        $eduModels = [
+            1 => Exam::class,
+            2 => StudentPerevot::class,
+            3 => StudentDtm::class,
+            4 => StudentMaster::class,
+        ];
+
+        if (!isset($eduModels[$this->edu_type_id])) {
+            return '----';
+        }
+
+        $eduRecord = $eduModels[$this->edu_type_id]::findOne([
+            'student_id' => $this->id,
+            'edu_direction_id' => $this->edu_direction_id,
+            'status' => 1,
+            'is_deleted' => 0
+        ]);
+
+        if (!$eduRecord) {
+            return '----';
+        }
+
+        if ($this->edu_type_id == 1) {
+            switch ($eduRecord->status) {
+                case 0:
+                    return "Bekor qilindi";
+                case 1:
+                    return "Test ishlamagan";
+                case 2:
+                    return "Testda";
+                case 3:
+                    return $eduRecord->down_time !== null ? "Yakunlab shartnoma oldi" : "Yakunlab shartnoma olmadi";
+            }
+        }
+
+        switch ($eduRecord->file_status) {
+            case 0:
+                return "Yuborilmagan";
+            case 1:
+                return "Kelib tushdi";
+            case 2:
+                return $eduRecord->down_time !== null ? "Tasdiqlandi. Yakunlab shartnoma oldi" : "Tasdiqlandi. Yakunlab shartnoma olmadi";
+            case 3:
+                return "Bekor qilindi";
+        }
+
+        return '----';
     }
 
 

@@ -18,34 +18,11 @@ use common\models\Lang;
 /** @var yii\widgets\ActiveForm $form */
 /** @var \common\models\EduType $eduType */
 
-$languages = Lang::find()->where(['is_deleted' => 0 , 'status' => 1])->all();
-$eduForm = EduForm::find()->where(['is_deleted' => 0 , 'status' => 1])->all();
-$data = [];
-$directions = EduDirection::find()
-    ->where([
-        'edu_type_id' => $eduType->id,
-        'edu_form_id' => $model->edu_form_id,
-        'lang_id' => $model->lang_id,
-        'status' => 1,
-        'is_deleted' => 0
-    ])->all();
-if (count($directions) > 0) {
-    foreach ($directions as $direction) {
-        $data[$direction->id] = $direction->direction->code.' - '.$direction->direction['name_uz'];
-    }
-}
-
-$status = [];
-if ($eduType->id == 1) {
-    $status = Status::eStatus();
-} elseif ($eduType->id > 1) {
-    $status = Status::perStatus();
-}
 ?>
 
 <div class="student-perevot-search">
     <?php $form = ActiveForm::begin([
-        'action' => ['index' , 'id' => $eduType->id],
+        'action' => ['chala'],
         'method' => 'get',
     ]); ?>
 
@@ -98,46 +75,11 @@ if ($eduType->id == 1) {
                         ]) ?>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <?= $form->field($model, 'lang_id')->widget(Select2::classname(), [
-                            'data' => ArrayHelper::map($languages, 'id', 'name_uz'),
-                            'options' => ['placeholder' => 'Ta\'lim  tilini tanlang ...'],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ])->label('Ta\'lim tili <span>*</span>'); ?>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <?= $form->field($model, 'edu_form_id')->widget(Select2::classname(), [
-                            'data' =>  ArrayHelper::map($eduForm, 'id', 'name_uz'),
-                            'options' => ['placeholder' => 'Ta\'lim shaklini tanlang ...'],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ])->label('Ta\'lim shakli <span>*</span>');; ?>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <?= $form->field($model, 'direction_id')->widget(Select2::classname(), [
-                            'data' => $data,
-                            'options' => ['placeholder' => 'Yo\'nalish tanlang ...'],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ])->label('Ta\'lim Yo\'nalishi <span>*</span>');; ?>
-                    </div>
-                </div>
 
                 <div class="col-lg-3 col-md-6">
                     <div class="form-group">
                         <?= $form->field($model, 'status')->widget(Select2::classname(), [
-                            'data' => $status,
+                            'data' => Status::step(),
                             'options' => ['placeholder' => 'Status tanlang ...'],
                             'pluginOptions' => [
                                 'allowClear' => true
@@ -145,6 +87,7 @@ if ($eduType->id == 1) {
                         ])->label('Status <span>*</span>');; ?>
                     </div>
                 </div>
+
                 <div class="col-lg-3 col-md-6">
                     <div class="form-group">
                         <?= $form->field($model, 'start_date')->widget(DatePicker::classname(), [
@@ -169,23 +112,6 @@ if ($eduType->id == 1) {
                     </div>
                 </div>
 
-                <?php if ($eduType->id == 1) :  ?>
-                    <div class="col-lg-2 col-md-6">
-                        <div class="form-group">
-                            <?= $form->field($model, 'exam_type')->widget(Select2::classname(), [
-                                'data' => [
-                                    0 => 'Online',
-                                    1 => 'Offline',
-                                ],
-                                'options' => ['placeholder' => 'On/Off tanlang ...'],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                            ])->label('Online/Offline <span>*</span>'); ?>
-                        </div>
-                    </div>
-                <?php endif;  ?>
-
                 <div class="col-lg-2 col-md-6">
                     <div class="form-group">
                         <?= $form->field($model, 'user_status')->widget(Select2::classname(), [
@@ -201,58 +127,10 @@ if ($eduType->id == 1) {
 
             <div class="form-group d-flex justify-content-end gap-2">
                 <?= Html::submitButton(Yii::t('app', 'Qidirish'), ['class' => 'b-btn b-primary']) ?>
-                <?= Html::a(Yii::t('app', 'Reset'), ['index' , 'id' => $eduType->id], ['class' => 'b-btn b-secondary']) ?>
+                <?= Html::a(Yii::t('app', 'Reset'), ['chala'], ['class' => 'b-btn b-secondary']) ?>
             </div>
         </div>
     </div>
 
     <?php ActiveForm::end(); ?>
 </div>
-
-
-<?php
-$js = <<<JS
-    $(document).ready(function() {
-        $("#studentsearch-lang_id").on('change', function () {
-            var form_id = $("#studentsearch-edu_form_id").val();
-            var lang_id = $(this).val();
-            var type_id = $eduType->id;
-            if (form_id > 0) {
-                $.ajax({
-                    url: '../direction/direction/',
-                    data: {lang_id: lang_id, form_id: form_id, type_id: type_id},
-                    type: 'POST',
-                    success: function (data) {
-                        $("#studentsearch-direction_id").html(data);
-                    },
-                    error: function () {
-                        alert("Xatolik!!!");
-                    }
-                });
-            }
-        });
-        $("#studentsearch-edu_form_id").on('change', function () {
-            var lang_id = $("#studentsearch-lang_id").val();
-            var form_id = $(this).val();
-            var type_id = $eduType->id;
-            if (lang_id > 0) {
-                $.ajax({
-                    url: '../direction/direction/',
-                    data: {lang_id: lang_id, form_id: form_id, type_id: type_id},
-                    type: 'POST',
-                    success: function (data) {
-                        $("#studentsearch-direction_id").html(data);
-                    },
-                    error: function () {
-                        alert("Xatolik21212!!!");
-                    }
-                });
-            }
-        });
-    });
-JS;
-$this->registerJs($js);
-?>
-
-
-

@@ -25,7 +25,7 @@ class StepThreeTwo extends Model
     {
         return [
             // `edu_type_id` majburiy maydon
-            [['filial_id' , 'lang_id' ,'edu_form_id' , 'edu_direction_id' , 'direction_course_id'], 'required'],
+            [['filial_id' , 'lang_id' ,'edu_form_id' , 'edu_direction_id' , 'direction_course_id', 'edu_name', 'edu_direction'], 'required'],
 
             // `edu_type_id` butun son bo'lishi kerak
             [['filial_id' , 'lang_id' ,'edu_form_id' , 'edu_direction_id' , 'direction_course_id'], 'integer'],

@@ -39,7 +39,7 @@
 }
 .form-section_item .modal-header,
 .form-section_item .modal-body {
-    padding: 10px;
+    padding: 0;
 }
 .form-section_item .modal-body {
     padding-bottom: 0;

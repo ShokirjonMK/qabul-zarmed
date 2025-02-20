@@ -2,7 +2,17 @@
 
 namespace backend\controllers;
 
+use backend\models\Passport;
+use common\models\EduDirection;
+use common\models\EduType;
+use common\models\StepOne;
+use common\models\StepThreeFour;
+use common\models\StepThreeOne;
+use common\models\StepThreeThree;
+use common\models\StepThreeTwo;
+use common\models\StepTwo;
 use common\models\Student;
+use common\models\StudentOferta;
 use common\models\StudentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -36,16 +46,42 @@ class StudentController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
+        $eduType = $this->eduTypeFindModel($id);
+
         $searchModel = new StudentSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search($this->request->queryParams , $eduType);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'eduType' => $eduType
         ]);
     }
+
+    public function actionChala()
+    {
+        $searchModel = new StudentSearch();
+        $dataProvider = $searchModel->chala($this->request->queryParams);
+
+        return $this->render('chala', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
+    public function actionContract()
+    {
+        $searchModel = new StudentSearch();
+        $dataProvider = $searchModel->contract($this->request->queryParams);
+
+        return $this->render('contract', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
 
     /**
      * Displays a single Student model.
@@ -111,10 +147,147 @@ class StudentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->update(false);
 
         return $this->redirect(['index']);
     }
+
+
+    public function actionInfo($id)
+    {
+        $student = $this->findModel($id);
+        $user = $student->user;
+        $model = new StepOne();
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $result = $model->ikStep($user , $student);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view' , 'id' => $student->id]);
+            }
+        }
+
+        return $this->renderAjax('_form-step1' , [
+            'model' => $model,
+            'student' => $student,
+        ]);
+    }
+
+    public function actionEduType($id)
+    {
+        $student = $this->findModel($id);
+        $user = $student->user;
+        $model = new StepTwo();
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $result = $model->ikStep($user , $student);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view' , 'id' => $student->id]);
+            }
+        }
+
+        return $this->renderAjax('_form-step2' , [
+            'model' => $model,
+            'student' => $student,
+        ]);
+    }
+
+
+    public function actionDirection($id)
+    {
+        $student = $this->findModel($id);
+        $user = $student->user;
+
+        $action = '';
+        if ($student->edu_type_id == 1) {
+            $model = new StepThreeOne();
+            $action = '_form-step3';
+        } elseif ($student->edu_type_id == 2) {
+            $model = new StepThreeTwo();
+            $action = '_form-step32';
+        } elseif ($student->edu_type_id == 3) {
+            $model = new StepThreeThree();
+            $action = '_form-step33';
+        }  elseif ($student->edu_type_id == 4) {
+            $model = new StepThreeFour();
+            $action = '_form-step34';
+        }
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->edu_type_id = $student->edu_type_id;
+                $result = $model->ikStep($user , $student);
+                if ($result['is_ok']) {
+                    $user->step = 5;
+                    $user->update(false);
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view' , 'id' => $student->id]);
+            }
+        }
+
+        return $this->renderAjax($action , [
+            'model' => $model,
+            'student' => $student,
+        ]);
+    }
+
+
+    public function actionOfertaUpload($id)
+    {
+        $model = $this->ofertafindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = StudentOferta::upload($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-upload', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionOfertaConfirm($id)
+    {
+        $model = $this->ofertafindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = StudentOferta::upload($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-upload', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Student model based on its primary key value.
@@ -129,6 +302,24 @@ class StudentController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function ofertafindModel($id)
+    {
+        if (($model = StudentOferta::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function eduTypeFindModel($id)
+    {
+        if (($model = EduType::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
     }
 }

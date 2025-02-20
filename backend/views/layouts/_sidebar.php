@@ -1,10 +1,6 @@
 <?php
 use yii\helpers\Url;
-use common\models\Menu;
-use common\models\Education;
-use common\models\Permission;
-use common\models\EduYear;
-use common\models\EduYearType;
+use common\models\EduType;
 
 $user = Yii::$app->user->identity;
 $role = $user->authItem;
@@ -48,6 +44,10 @@ function getActiveTwo($cont, $act)
         return false;
     }
 }
+
+$eduTypes = EduType::find()
+    ->where(['is_deleted' => 0])
+    ->all();
 ?>
 
 <div id="sidebar" class="root_left">
@@ -137,6 +137,63 @@ function getActiveTwo($cont, $act)
                     </div>
                 </li>
 
+                <li class="sidebar_li sidebar_drop">
+                    <a href="javascript: void(0);" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-graduation-cap"></i>
+                        <span>
+                            Qabul 2025
+                        </span>
+                        <i class="icon-n fa-solid fa-chevron-right"></i>
+                    </a>
+                    <div class="menu_drop">
+                        <ul class="sub_menu_ul">
+                            <?php foreach ($eduTypes as $eduType) : ?>
+                                <li class="sub_menu_li">
+                                    <a href="<?= Url::to(['student/index' , 'id' => $eduType->id]) ?>" class="<?= getActiveSubMenu('', '') ?>">
+                                        <?= $eduType->name_uz ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['student/chala']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Chala arizalar</span>
+                    </a>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['student/bot']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Telegram bot</span>
+                    </a>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['student/contract']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Barcha shartnomalar</span>
+                    </a>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['branch/index']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Umumiy arizalar</span>
+                    </a>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['branch/index']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Arxiv</span>
+                    </a>
+                </li>
+
+
 
                 <li class="sidebar_li sidebar_drop">
                     <a href="javascript: void(0);" class="sidebar_li_link">
@@ -166,7 +223,6 @@ function getActiveTwo($cont, $act)
                         </ul>
                     </div>
                 </li>
-
             </ul>
         </div>
 

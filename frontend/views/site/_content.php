@@ -3,6 +3,8 @@ use common\models\EduForm;
 use common\models\Direction;
 use common\models\Languages;
 use yii\helpers\Url;
+use common\models\EduDirection;
+use common\models\Lang;
 
 $eduYearForms = EduForm::find()
     ->where(['is_deleted' => 0, 'status' => 1])
@@ -28,15 +30,16 @@ $lang = Yii::$app->language;
 <!--                            --><?php //foreach ($eduYearForms as $eduYearForm) : ?>
 <!--                                --><?php
 //                                $directionCount = (new \yii\db\Query())
-//                                    ->select('code')
-//                                    ->from('direction')
+//                                    ->select('direction_id')
+//                                    ->from('edu_direction')
 //                                    ->where(['status' => 1, 'is_deleted' => 0, 'edu_form_id' => $eduYearForm->id])
-//                                    ->groupBy('code')
+//                                    ->andWhere(['in' , 'edu_type_id' , [1,2,3]])
+//                                    ->groupBy('direction_id')
 //                                    ->count();
 //                                ?>
 <!--                                <li class="nav-item" role="presentation">-->
 <!--                                    <button class="nav-link --><?php //if ($a == 1) { echo "active";} ?><!--" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills_ik--><?php //= $a ?><!--" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">-->
-<!--                                        --><?php //= $eduYearForm->eduForm['name_'.$lang] ?><!-- --><?php //= Yii::t("app" , "a14") ?><!-- &nbsp;&nbsp; <span class="btn-span">--><?php //= $directionCount ?><!--</span>-->
+<!--                                        --><?php //= $eduYearForm['name_'.$lang] ?><!-- --><?php //= Yii::t("app" , "a14") ?><!-- &nbsp;&nbsp; <span class="btn-span">--><?php //= $directionCount ?><!--</span>-->
 <!--                                    </button>-->
 <!--                                </li>-->
 <!--                                --><?php //$a++; ?>
@@ -49,14 +52,16 @@ $lang = Yii::$app->language;
 //                                $eduForm = $eduYearForm->eduForm;
 //                                $subQuery = (new \yii\db\Query())
 //                                    ->select(['MAX(id)'])
-//                                    ->from('direction')
+//                                    ->from('edu_direction')
 //                                    ->where([
 //                                        'status' => 1,
 //                                        'is_deleted' => 0,
-//                                        'edu_form_id' => $eduYearForm->id
-//                                    ])->groupBy('code');
+//                                        'edu_form_id' => $eduYearForm->id,
+//                                    ])
+//                                    ->andWhere(['in' , 'edu_type_id' , [1,2,3]])
+//                                    ->groupBy('direction_id');
 //
-//                                $directions = Direction::find()
+//                                $directions = EduDirection::find()
 //                                    ->where(['id' => $subQuery])
 //                                    ->all();
 //                                ?>
@@ -78,12 +83,13 @@ $lang = Yii::$app->language;
 <!--                                                    --><?php //$t = 1; ?>
 <!--                                                    --><?php //foreach ($directions as $direction) : ?>
 <!--                                                        --><?php
-//                                                            $languages = Languages::find()
-//                                                                ->where(['in' , 'id' , Direction::find()
+//                                                            $languages = Lang::find()
+//                                                                ->where(['in' , 'id' , EduDirection::find()
 //                                                                    ->select('language_id')
 //                                                                    ->where([
-//                                                                        'code' => $direction->code,
+//                                                                        'code' => $direction->direction->code,
 //                                                                        'edu_form_id' => $eduYearForm->id,
+//                                                                        'edu_type_id' => [1,2,3],
 //                                                                        'status' => 1,
 //                                                                        'is_deleted' => 0
 //                                                                    ])
@@ -91,7 +97,7 @@ $lang = Yii::$app->language;
 //                                                        ?>
 <!--                                                        <tr>-->
 <!--                                                            <td date-label="№">--><?php //= $t ?><!--</td>-->
-<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a15") ?><!--">--><?php //= '<span class="ik_color_red">'.$direction->code.'</span>'.' - '.$direction['name_'.$lang] ?><!--</td>-->
+<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a15") ?><!--">--><?php //= '<span class="ik_color_red">'.$direction->direction->code.'</span>'.' - '.$direction->direction['name_'.$lang] ?><!--</td>-->
 <!--                                                            <td date-label="--><?php //= Yii::t("app" , "a16") ?><!--">--><?php //= $eduForm['name_'.$lang]; ?><!--</td>-->
 <!--                                                            <td date-label="--><?php //= Yii::t("app" , "a17") ?><!--">-->
 <!--                                                                --><?php //if (count($languages) > 0): ?>
@@ -104,8 +110,8 @@ $lang = Yii::$app->language;
 <!--                                                                    ------->
 <!--                                                                --><?php //endif; ?>
 <!--                                                            </td>-->
-<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a18") ?><!--">--><?php //= $direction->edu_duration ?><!-- &nbsp; --><?php //= Yii::t("app" , "a20") ?><!--</td>-->
-<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a19") ?><!--">--><?php //= number_format((int)$direction->contract, 0, '', ' '); ?><!-- --><?php //= Yii::t("app" , "a21") ?><!--</td>-->
+<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a18") ?><!--">--><?php //= $direction->duration ?><!-- &nbsp; --><?php //= Yii::t("app" , "a20") ?><!--</td>-->
+<!--                                                            <td date-label="--><?php //= Yii::t("app" , "a19") ?><!--">--><?php //= number_format((int)$direction->price, 0, '', ' '); ?><!-- --><?php //= Yii::t("app" , "a21") ?><!--</td>-->
 <!--                                                        </tr>-->
 <!--                                                        --><?php //$t++; ?>
 <!--                                                    --><?php //endforeach; ?>

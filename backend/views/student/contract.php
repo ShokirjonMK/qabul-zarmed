@@ -16,7 +16,7 @@ use yii\widgets\LinkPager;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var EduType $eduType */
 
-$this->title = $eduType->name_uz;
+$this->title = 'Shartnoma qilinganlar';
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
@@ -36,11 +36,7 @@ $breadcrumbs['item'][] = [
         </ol>
     </nav>
 
-    <?= $this->render('_search', ['model' => $searchModel , 'eduType' => $eduType]); ?>
-
-    <p class="mb-3 mt-4">
-        <?= Html::a('Q\'shish', ['create'], ['class' => 'b-btn b-primary']) ?>
-    </p>
+    <?= $this->render('_searchContract', ['model' => $searchModel]); ?>
 
     <?php $data = [
         ['class' => 'yii\grid\SerialColumn'],
@@ -101,8 +97,7 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Telefon raqami'],
             'format' => 'raw',
             'value' => function($model) {
-                $text = "<br><div class='badge-table-div active mt-2'>".date("Y-m-d H:i:s" , $model->user->created_at)."</div>";
-                return $model->username.$text;
+                return date("Y-m-d H:i:s" , $model->user->created_at);
             },
         ],
         [
@@ -110,7 +105,7 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Status'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->eduStatus;
+                return $model->contractStatus;
             },
         ],
         [

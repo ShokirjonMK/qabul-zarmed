@@ -41,6 +41,16 @@ class Status
         return $id === null ? $statuses : ($statuses[$id] ?? null);
     }
 
+    public static function contractStatus($id = null)
+    {
+        $statuses = [
+            1 => 'Shartnoma olganlar',
+            2 => 'Shartnoma olmaganlar',
+        ];
+
+        return $id === null ? $statuses : ($statuses[$id] ?? null);
+    }
+
 
     public static function grantStatus()
     {
@@ -76,7 +86,7 @@ class Status
         $data = [
             self::USER_STATUS_ACTIVE => 'Faol',
             self::USER_STATUS_NO_FAOL => 'Blocklangan',
-            self::USER_STATUS_DELETE => 'O\'chirilgan',
+            self::USER_STATUS_DELETE => 'Arxivlangan',
         ];
 
         return $id === null ? $data : ($data[$id] ?? null);
@@ -88,7 +98,7 @@ class Status
         $data = [
             self::USER_STATUS_ACTIVE => 'Faol',
             self::USER_STATUS_NO_FAOL => 'Blocklangan',
-            self::USER_STATUS_DELETE => 'O\'chirilgan',
+            self::USER_STATUS_DELETE => 'Arxivlangan',
         ];
         if ($id == null) {
             return $data;
@@ -100,7 +110,7 @@ class Status
     {
         $data = [
             self::USER_STATUS_ACTIVE => 'Faol',
-            self::USER_STATUS_DELETE => 'O\'chirilgan',
+            self::USER_STATUS_DELETE => 'Arxivlangan',
         ];
         if ($id == null) {
             return $data;
@@ -122,7 +132,7 @@ class Status
             1 => 'Test ishlamagan',
             2 => 'Testda',
             3 => 'Testdan o\'tdi',
-            4 => 'Testdan o\'tolmadi',
+//            4 => 'Testdan o\'tolmadi',
             5 => 'Shartnoma olgan',
             6 => 'Shartnoma olmagan',
         ];
@@ -207,6 +217,7 @@ class Status
             3 => 'Yo\'nalish tanlamagan',
             4 => 'Tasdiqdalamagan',
             5 => 'To\'liq ro\'yhatdan o\'gan',
+            6 => 'Parol tiklash sms kod kiritmagan',
         ];
         if ($id == null) {
             return $data;

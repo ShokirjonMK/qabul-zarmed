@@ -92,6 +92,7 @@ class StepTwo extends Model
 
         $tables = [
             'common\models\Exam',
+            'common\models\ExamSubject',
             'common\models\StudentDtm',
             'common\models\StudentPerevot',
             'common\models\StudentMaster',

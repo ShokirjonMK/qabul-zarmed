@@ -2,6 +2,7 @@
 //     $('.pageLoading').fadeOut('slow');
 // });
 
+
 $(document).ready(function(){
     const password = $("#eye_password");
     $("#eyePassword").click(function(){

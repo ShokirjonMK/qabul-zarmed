@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use common\models\Direction;
 use common\models\DirectionSearch;
+use common\models\EduDirection;
+use common\models\Student;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -45,6 +47,32 @@ class DirectionController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionDirection()
+    {
+        $form_id = \Yii::$app->request->post('form_id');
+        $lang_id = \Yii::$app->request->post('lang_id');
+        $type_id = \Yii::$app->request->post('type_id');
+
+        $directions = EduDirection::find()
+            ->where([
+                'edu_type_id' => $type_id,
+                'edu_form_id' => $form_id,
+                'lang_id' => $lang_id,
+                'status' => 1,
+                'is_deleted' => 0
+            ])->all();
+
+        $options = "";
+        $options .= "<option value=''>Yo'nalish tanlang ...<option>";
+        if (count($directions) > 0) {
+            foreach ($directions as $direction) {
+                $eduDirection = $direction->direction;
+                $options .= "<option value='$direction->id'>". $eduDirection->code ." - ". $eduDirection['name_uz']. "</option>";
+            }
+        }
+        return $options;
     }
 
     /**

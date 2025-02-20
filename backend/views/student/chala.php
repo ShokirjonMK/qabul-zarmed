@@ -16,7 +16,7 @@ use yii\widgets\LinkPager;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var EduType $eduType */
 
-$this->title = $eduType->name_uz;
+$this->title = 'Chala arizalar';
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
@@ -36,11 +36,7 @@ $breadcrumbs['item'][] = [
         </ol>
     </nav>
 
-    <?= $this->render('_search', ['model' => $searchModel , 'eduType' => $eduType]); ?>
-
-    <p class="mb-3 mt-4">
-        <?= Html::a('Q\'shish', ['create'], ['class' => 'b-btn b-primary']) ?>
-    </p>
+    <?= $this->render('_searchChala', ['model' => $searchModel]); ?>
 
     <?php $data = [
         ['class' => 'yii\grid\SerialColumn'],
@@ -49,51 +45,17 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'F.I.O' ,'class' => 'wid250'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->fullName.' | '.$model->passport_serial.' '.$model->passport_number.' | '.$model->passport_pin;
+                return $model->fullName ?? '----';
             },
         ],
         [
-            'attribute' => 'Yo\'nalishi',
-            'contentOptions' => ['date-label' => 'Yo\'nalishi' ,'class' => 'wid250'],
+            'attribute' => 'Pasport ma\'lumoti',
+            'contentOptions' => ['date-label' => 'Pasport ma\'lumoti'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->direction->name ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim turi',
-            'contentOptions' => ['date-label' => 'Ta\'lim turi'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->eduType->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim shakli',
-            'contentOptions' => ['date-label' => 'Ta\'lim shakli'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->eduForm->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim tili',
-            'contentOptions' => ['date-label' => 'Ta\'lim tili'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->language->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Bosqich',
-            'contentOptions' => ['date-label' => 'F.I.O' ,'class' => 'Ta\'lim shakli'],
-            'format' => 'raw',
-            'value' => function($model) {
-                if ($model->edu_type_id == 2 && $model->course_id != null) {
-                    $courseId = $model->course_id + 1;
-                    return Course::findOne($courseId)->name_uz;
-                }
-                return "1 - bosqich";
+                $seria= $model->passport_serial ?? '-- ';
+                $number = $model->passport_number ?? ' -------';
+                return $seria.' '.$number;
             },
         ],
         [
@@ -101,8 +63,15 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Telefon raqami'],
             'format' => 'raw',
             'value' => function($model) {
-                $text = "<br><div class='badge-table-div active mt-2'>".date("Y-m-d H:i:s" , $model->user->created_at)."</div>";
-                return $model->username.$text;
+                return $model->username;
+            },
+        ],
+        [
+            'attribute' => 'Ro\'yhatga olingan',
+            'contentOptions' => ['date-label' => 'Ro\'yhatga olingan'],
+            'format' => 'raw',
+            'value' => function($model) {
+                return date("Y-m-d H:i:s" , $model->user->created_at);
             },
         ],
         [
@@ -110,7 +79,7 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Status'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->eduStatus;
+                return $model->chalaStatus;
             },
         ],
         [
@@ -118,9 +87,8 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Status'],
             'format' => 'raw',
             'value' => function($model) {
-                $offcan = "<a href='#' class='badge-table-div active mt-2'><span class='bi bi-text-right'></span></a>";
-                $readMore = "<br><a href='".Url::to(['student/view' , 'id' => $model->id])."' class='badge-table-div active mt-2'>Batafsil</a>";
-                return $offcan.$readMore;
+                $readMore = "<a href='".Url::to(['student/view' , 'id' => $model->id])."' class='badge-table-div active mt-2'>Batafsil</a>";
+                return $readMore;
             },
         ],
     ]; ?>
