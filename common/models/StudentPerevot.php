@@ -42,6 +42,8 @@ use Yii;
  */
 class StudentPerevot extends \yii\db\ActiveRecord
 {
+    public $file_pdf;
+
     /**
      * {@inheritdoc}
      */

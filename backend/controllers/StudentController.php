@@ -3,8 +3,10 @@
 namespace backend\controllers;
 
 use backend\models\Passport;
+use common\models\ConfirmFile;
 use common\models\EduDirection;
 use common\models\EduType;
+use common\models\ExamSubject;
 use common\models\StepOne;
 use common\models\StepThreeFour;
 use common\models\StepThreeOne;
@@ -12,11 +14,16 @@ use common\models\StepThreeThree;
 use common\models\StepThreeTwo;
 use common\models\StepTwo;
 use common\models\Student;
+use common\models\StudentDtm;
+use common\models\StudentMaster;
 use common\models\StudentOferta;
+use common\models\StudentPerevot;
 use common\models\StudentSearch;
+use kartik\mpdf\Pdf;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\UploadPdf;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -77,6 +84,18 @@ class StudentController extends Controller
         $dataProvider = $searchModel->contract($this->request->queryParams);
 
         return $this->render('contract', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
+
+    public function actionAll()
+    {
+        $searchModel = new StudentSearch();
+        $dataProvider = $searchModel->all($this->request->queryParams);
+
+        return $this->render('all', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider
         ]);
@@ -202,6 +221,29 @@ class StudentController extends Controller
     }
 
 
+    public function actionUserUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($this->request->post())) {
+                dd($post);
+                $result = $model->userUpdate($old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view' , 'id' => $model->id]);
+            }
+        }
+        return $this->renderAjax('user-update' , [
+            'model' => $model,
+        ]);
+    }
+
+
     public function actionDirection($id)
     {
         $student = $this->findModel($id);
@@ -243,7 +285,6 @@ class StudentController extends Controller
         ]);
     }
 
-
     public function actionOfertaUpload($id)
     {
         $model = $this->ofertafindModel($id);
@@ -270,10 +311,34 @@ class StudentController extends Controller
     {
         $model = $this->ofertafindModel($id);
 
+        $old = $model;
         if ($this->request->isPost) {
             $post = $this->request->post();
             if ($model->load($post)) {
-                $result = StudentOferta::upload($model);
+                $result = StudentOferta::confirm($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-confirm', [
+            'model' => $model,
+        ]);
+    }
+
+
+    public function actionTrUpload($id)
+    {
+        $model = $this->trFindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = UploadPdf::upload($model);
                 if ($result['is_ok']) {
                     \Yii::$app->session->setFlash('success');
                 } else {
@@ -288,6 +353,227 @@ class StudentController extends Controller
         ]);
     }
 
+    public function actionTrConfirm($id)
+    {
+        $model = $this->trfindModel($id);
+
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = ConfirmFile::confirm($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-confirm', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDtmUpload($id)
+    {
+        $model = $this->dtmFindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = UploadPdf::upload($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-upload', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDtmConfirm($id)
+    {
+        $model = $this->dtmfindModel($id);
+
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = ConfirmFile::confirm($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-confirm', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionMasterUpload($id)
+    {
+        $model = $this->masterFindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = UploadPdf::upload($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-upload', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionMasterConfirm($id)
+    {
+        $model = $this->masterfindModel($id);
+
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = ConfirmFile::confirm($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-confirm', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionSertificateUpload($id)
+    {
+        $model = $this->sertificateFindModel($id);
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = UploadPdf::upload($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-upload', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionSertificateConfirm($id)
+    {
+        $model = $this->sertificatefindModel($id);
+
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = ExamSubject::confirm($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('oferta-confirm', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionAddBall($id)
+    {
+        $model = $this->sertificatefindModel($id);
+
+        $old = $model;
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = ExamSubject::addBall($model, $old);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('add-ball', [
+            'model' => $model,
+        ]);
+    }
+
+
+    public function actionContractLoad($id, $type)
+    {
+        $errors = [];
+        $student = Student::findOne(['id' => $id]);
+        if ($type == 2) {
+            $action = 'con2';
+        } elseif ($type == 3) {
+            $action = 'con3';
+        } else {
+            $errors[] = ['Type not\'g\'ri tanlandi!'];
+            \Yii::$app->session->setFlash('error' , $errors);
+            return $this->redirect(\Yii::$app->request->referrer);
+        }
+
+        $pdf = \Yii::$app->ikPdf;
+        $content = $pdf->contract($student , $action);
+
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            'format' => Pdf::FORMAT_A4,
+            'marginLeft' => 25,
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            'destination' => Pdf::DEST_DOWNLOAD,
+            'content' => $content,
+            'cssInline' => '
+                body {
+                    color: #000000;
+                }
+            ',
+            'filename' => date('YmdHis') . ".pdf",
+            'options' => [
+                'title' => 'Contract',
+                'subject' => 'Student Contract',
+                'keywords' => 'pdf, contract, student',
+            ],
+        ]);
+
+        return $pdf->render();
+    }
 
     /**
      * Finds the Student model based on its primary key value.
@@ -308,6 +594,42 @@ class StudentController extends Controller
     protected function ofertafindModel($id)
     {
         if (($model = StudentOferta::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function trFindModel($id)
+    {
+        if (($model = StudentPerevot::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function dtmFindModel($id)
+    {
+        if (($model = StudentDtm::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function masterFindModel($id)
+    {
+        if (($model = StudentMaster::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    protected function sertificateFindModel($id)
+    {
+        if (($model = ExamSubject::findOne(['id' => $id , 'is_deleted' => 0])) !== null) {
             return $model;
         }
 

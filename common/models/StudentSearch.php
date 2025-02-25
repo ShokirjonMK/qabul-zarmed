@@ -257,25 +257,26 @@ class StudentSearch extends Student
         $query = Student::find()
             ->alias('s')
             ->innerJoin(User::tableName() . ' u', 's.user_id = u.id')
+            ->innerJoin(Exam::tableName() . ' e', 's.id = e.student_id AND e.status = 3')
             ->where([
                 'u.step' => 5,
                 'u.status' => [9, 10],
                 'u.user_role' => 'student',
                 'u.cons_id' => $user->cons_id
-            ])
-            ->innerJoin(Exam::tableName() . ' e', 's.id = e.student_id AND e.status = 3');
+            ]);
 
-        // Har bir jadval uchun alohida alias beriladi
-        $studentModels = [
-            'common\models\StudentPerevot' => 'sp',
-            'common\models\StudentDtm' => 'sd',
-            'common\models\StudentMaster' => 'sm'
-        ];
+        // StudentPerevot, StudentDtm, StudentMaster jadvallariga LEFT JOIN qo‘shamiz
+        $query->leftJoin(StudentPerevot::tableName() . ' sp', 's.id = sp.student_id AND sp.file_status = 2 AND sp.status = 1 AND sp.is_deleted = 0');
+        $query->leftJoin(StudentDtm::tableName() . ' sd', 's.id = sd.student_id AND sd.file_status = 2 AND sd.status = 1 AND sd.is_deleted = 0');
+        $query->leftJoin(StudentMaster::tableName() . ' sm', 's.id = sm.student_id AND sm.file_status = 2 AND sm.status = 1 AND sm.is_deleted = 0');
 
-        foreach ($studentModels as $model => $alias) {
-            $tableName = call_user_func([$model, 'tableName']);
-            $query->innerJoin("$tableName $alias", "s.id = $alias.student_id AND $alias.file_status = 2 AND $alias.status = 1 AND $alias.is_deleted = 0");
-        }
+        // Kamida bitta jadvalda ma'lumot bo'lsa natijaga qo'shish
+        $query->andWhere([
+            'or',
+            ['not', ['sp.student_id' => null]],
+            ['not', ['sd.student_id' => null]],
+            ['not', ['sm.student_id' => null]]
+        ]);
 
         // Ma'lumotlarni chiqarish uchun ActiveDataProvider
         $dataProvider = new ActiveDataProvider([
@@ -287,6 +288,70 @@ class StudentSearch extends Student
         if (!$this->validate()) {
             return $dataProvider;
         }
+
+        if ($this->username != '+998 (__) ___-__-__') {
+            $query->andFilterWhere(['like', 'u.username', $this->username]);
+        }
+
+        $query->andFilterWhere([
+            's.id' => $this->id,
+            's.user_id' => $this->user_id,
+            's.gender' => $this->gender,
+            's.birthday' => $this->birthday,
+            's.created_at' => $this->created_at,
+            's.updated_at' => $this->updated_at,
+            's.created_by' => $this->created_by,
+            's.updated_by' => $this->updated_by,
+            's.is_deleted' => $this->is_deleted,
+            's.edu_type_id' => $this->edu_type_id,
+            's.edu_form_id' => $this->edu_form_id,
+            's.direction_id' => $this->direction_id,
+            's.edu_direction_id' => $this->edu_direction_id,
+            's.lang_id' => $this->lang_id,
+            's.direction_course_id' => $this->direction_course_id,
+            's.course_id' => $this->course_id,
+            's.exam_type' => $this->exam_type,
+        ]);
+
+        $query->andFilterWhere(['like', 's.first_name', $this->first_name])
+            ->andFilterWhere(['like', 's.last_name', $this->last_name])
+            ->andFilterWhere(['like', 's.middle_name', $this->middle_name])
+            ->andFilterWhere(['like', 's.student_phone', $this->student_phone])
+            ->andFilterWhere(['like', 's.username', $this->username])
+            ->andFilterWhere(['like', 's.passport_number', $this->passport_number])
+            ->andFilterWhere(['like', 's.passport_serial', $this->passport_serial])
+            ->andFilterWhere(['like', 's.passport_pin', $this->passport_pin])
+            ->andFilterWhere(['like', 's.passport_issued_date', $this->passport_issued_date])
+            ->andFilterWhere(['like', 's.passport_given_date', $this->passport_given_date])
+            ->andFilterWhere(['like', 's.passport_given_by', $this->passport_given_by])
+            ->andFilterWhere(['like', 's.adress', $this->adress])
+            ->andFilterWhere(['like', 's.edu_name', $this->edu_name])
+            ->andFilterWhere(['like', 's.edu_direction', $this->edu_direction]);
+
+        return $dataProvider;
+    }
+
+    public function all($params)
+    {
+        $query = Student::find()
+            ->alias('s')
+            ->innerJoin(User::tableName() . ' u', 's.user_id = u.id')
+            ->where([
+                'u.status' => [0, 9, 10],
+                'u.user_role' => 'student',
+            ]);
+
+        // Ma'lumotlarni chiqarish uchun ActiveDataProvider
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
 
         if ($this->username != '+998 (__) ___-__-__') {
             $query->andFilterWhere(['like', 'u.username', $this->username]);

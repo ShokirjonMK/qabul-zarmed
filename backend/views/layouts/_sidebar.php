@@ -92,6 +92,20 @@ $eduTypes = EduType::find()
                     </a>
                 </li>
 
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['subjects/index']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Fanlar</span>
+                    </a>
+                </li>
+
+                <li class="sidebar_li">
+                    <a href="<?= Url::to(['direction/index']) ?>" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-user-group"></i>
+                        <span>Yo'nalishlar</span>
+                    </a>
+                </li>
+
 
                 <li class="sidebar_li sidebar_drop">
                     <a href="javascript: void(0);" class="sidebar_li_link">
@@ -103,11 +117,6 @@ $eduTypes = EduType::find()
                     </a>
                     <div class="menu_drop">
                         <ul class="sub_menu_ul">
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['subjects/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Fanlar
-                                </a>
-                            </li>
                             <li class="sub_menu_li">
                                 <a href="<?= Url::to(['lang/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
                                     Ta'lim tili
@@ -121,11 +130,6 @@ $eduTypes = EduType::find()
                             <li class="sub_menu_li">
                                 <a href="<?= Url::to(['edu-form/index']) ?>">
                                     Ta'lim shakli
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['direction/index']) ?>">
-                                    Yo'nalishlar
                                 </a>
                             </li>
                             <li class="sub_menu_li">
@@ -166,13 +170,6 @@ $eduTypes = EduType::find()
                 </li>
 
                 <li class="sidebar_li">
-                    <a href="<?= Url::to(['student/bot']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Telegram bot</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li">
                     <a href="<?= Url::to(['student/contract']) ?>" class="sidebar_li_link">
                         <i class="i-n fa-solid fa-user-group"></i>
                         <span>Barcha shartnomalar</span>
@@ -180,20 +177,25 @@ $eduTypes = EduType::find()
                 </li>
 
                 <li class="sidebar_li">
-                    <a href="<?= Url::to(['branch/index']) ?>" class="sidebar_li_link">
+                    <a href="<?= Url::to(['student/all']) ?>" class="sidebar_li_link">
                         <i class="i-n fa-solid fa-user-group"></i>
                         <span>Umumiy arizalar</span>
                     </a>
                 </li>
 
+<!--                <li class="sidebar_li">-->
+<!--                    <a href="--><?php //= Url::to(['student/bot']) ?><!--" class="sidebar_li_link">-->
+<!--                        <i class="i-n fa-solid fa-user-group"></i>-->
+<!--                        <span>Telegram bot</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+
                 <li class="sidebar_li">
-                    <a href="<?= Url::to(['branch/index']) ?>" class="sidebar_li_link">
+                    <a href="<?= Url::to(['student/archive']) ?>" class="sidebar_li_link">
                         <i class="i-n fa-solid fa-user-group"></i>
                         <span>Arxiv</span>
                     </a>
                 </li>
-
-
 
                 <li class="sidebar_li sidebar_drop">
                     <a href="javascript: void(0);" class="sidebar_li_link">

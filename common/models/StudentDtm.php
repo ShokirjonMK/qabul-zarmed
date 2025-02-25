@@ -38,6 +38,8 @@ use Yii;
  */
 class StudentDtm extends \yii\db\ActiveRecord
 {
+    public $file_pdf;
+
     /**
      * {@inheritdoc}
      */

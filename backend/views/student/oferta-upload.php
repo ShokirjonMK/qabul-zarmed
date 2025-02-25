@@ -11,7 +11,7 @@ use common\models\Student;
 ?>
 
 <div class="modal-header mt-2">
-    <h1 class="modal-title" id="exampleModalLabel">Oferta yuklash</h1>
+    <h1 class="modal-title" id="exampleModalLabel">Fayl(pdf) yuklash</h1>
     <p class="btn-close" data-bs-dismiss="modal" aria-label="Close"></p>
 </div>
 

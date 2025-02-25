@@ -118,9 +118,8 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Status'],
             'format' => 'raw',
             'value' => function($model) {
-                $offcan = "<a href='#' class='badge-table-div active mt-2'><span class='bi bi-text-right'></span></a>";
-                $readMore = "<br><a href='".Url::to(['student/view' , 'id' => $model->id])."' class='badge-table-div active mt-2'>Batafsil</a>";
-                return $offcan.$readMore;
+                $readMore = "<a href='".Url::to(['student/view' , 'id' => $model->id])."' class='badge-table-div active mt-2'>Batafsil</a>";
+                return $readMore;
             },
         ],
     ]; ?>

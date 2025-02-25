@@ -16,7 +16,7 @@ use yii\widgets\LinkPager;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var EduType $eduType */
 
-$this->title = 'Shartnoma qilinganlar';
+$this->title = 'Umumiy arizalar';
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
@@ -36,7 +36,7 @@ $breadcrumbs['item'][] = [
         </ol>
     </nav>
 
-    <?= $this->render('_searchContract', ['model' => $searchModel]); ?>
+    <?= $this->render('_searchAll', ['model' => $searchModel]); ?>
 
     <?php $data = [
         ['class' => 'yii\grid\SerialColumn'],
@@ -45,51 +45,15 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'F.I.O' ,'class' => 'wid250'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->fullName.' | '.$model->passport_serial.' '.$model->passport_number.' | '.$model->passport_pin;
+                return $model->fullName;
             },
         ],
         [
-            'attribute' => 'Yo\'nalishi',
-            'contentOptions' => ['date-label' => 'Yo\'nalishi' ,'class' => 'wid250'],
+            'attribute' => 'Pasport ma\'lumoti',
+            'contentOptions' => ['date-label' => 'Pasport ma\'lumoti' ,'class' => 'wid250'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->direction->name ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim turi',
-            'contentOptions' => ['date-label' => 'Ta\'lim turi'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->eduType->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim shakli',
-            'contentOptions' => ['date-label' => 'Ta\'lim shakli'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->eduForm->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Ta\'lim tili',
-            'contentOptions' => ['date-label' => 'Ta\'lim tili'],
-            'format' => 'raw',
-            'value' => function($model) {
-                return $model->language->name_uz ?? '----';
-            },
-        ],
-        [
-            'attribute' => 'Bosqich',
-            'contentOptions' => ['date-label' => 'F.I.O' ,'class' => 'Ta\'lim shakli'],
-            'format' => 'raw',
-            'value' => function($model) {
-                if ($model->edu_type_id == 2 && $model->course_id != null) {
-                    $courseId = $model->course_id + 1;
-                    return Course::findOne($courseId)->name_uz;
-                }
-                return "1 - bosqich";
+                return $model->passport_serial.' '.$model->passport_number.' | '.$model->passport_pin;
             },
         ],
         [
@@ -97,7 +61,20 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Telefon raqami'],
             'format' => 'raw',
             'value' => function($model) {
-                return date("Y-m-d H:i:s" , $model->user->created_at);
+                $text = "<br><div class='badge-table-div active mt-2'>".date("Y-m-d H:i:s" , $model->user->created_at)."</div>";
+                return $model->username.$text;
+            },
+        ],
+        [
+            'attribute' => 'Jarayoni',
+            'contentOptions' => ['date-label' => 'Jarayoni'],
+            'format' => 'raw',
+            'value' => function($model) {
+                $user = $model->user;
+                if ($user->step < 5) {
+                    return $model->chalaStatus;
+                }
+                return $model->eduStatus;
             },
         ],
         [
@@ -105,7 +82,25 @@ $breadcrumbs['item'][] = [
             'contentOptions' => ['date-label' => 'Status'],
             'format' => 'raw',
             'value' => function($model) {
-                return $model->contractStatus;
+                $user = $model->user;
+                if ($user->status == 10) {
+                    return "<div class='badge-table-div active mt-2'>Faol</div>";
+                } elseif ($user->status == 9 && $user->step > 0){
+                    return "<div class='badge-table-div active mt-2'>Parol tiklashda SMS parol kiritmagan</div>";
+                } elseif ($user->status == 9 && $user->step == 0){
+                    return "<div class='badge-table-div active mt-2'>SMS parol kiritmagan</div>";
+                } elseif ($user->status == 0){
+                    return "<div class='badge-table-div active mt-2'>Arxivlangan</div>";
+                }
+            },
+        ],
+        [
+            'attribute' => 'CONSULTING',
+            'contentOptions' => ['date-label' => 'CONSULTING'],
+            'format' => 'raw',
+            'value' => function($model) {
+                $cons = $model->user->cons;
+                return "<a href='$cons->domen' class='badge-table-div active mt-2'>".str_replace("https://", "", $cons->domen)."</a>";
             },
         ],
         [

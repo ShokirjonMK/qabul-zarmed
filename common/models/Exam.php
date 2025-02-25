@@ -142,6 +142,22 @@ class Exam extends \yii\db\ActiveRecord
         return $this->hasMany(ExamSubject::class, ['exam_id' => 'id']);
     }
 
+    public function getExamBall()
+    {
+        $ball = 0;
+        $subjects = $this->examSubjects;
+        foreach ($subjects as $subject) {
+            $ball = $ball + $subject->ball;
+        }
+        return $ball;
+    }
+
+
+    public function actionFinish()
+    {
+
+    }
+
     /**
      * Gets query for [[Language]].
      *

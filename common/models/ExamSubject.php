@@ -42,6 +42,9 @@ use Yii;
  */
 class ExamSubject extends \yii\db\ActiveRecord
 {
+    public $file_pdf;
+    public $add_ball;
+
     /**
      * {@inheritdoc}
      */
@@ -56,7 +59,7 @@ class ExamSubject extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['exam_id', 'user_id', 'student_id', 'edu_direction_id', 'direction_id', 'language_id', 'edu_type_id', 'edu_form_id', 'direction_subject_id', 'subject_id', 'file_status', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'is_deleted'], 'integer'],
+            [['exam_id', 'user_id', 'student_id', 'edu_direction_id', 'direction_id', 'language_id', 'edu_type_id', 'edu_form_id', 'direction_subject_id', 'subject_id', 'file_status', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'is_deleted', 'add_ball'], 'integer'],
             [['ball'], 'number'],
             [['file'], 'string', 'max' => 255],
             [['direction_subject_id'], 'exist', 'skipOnError' => true, 'targetClass' => DirectionSubject::class, 'targetAttribute' => ['direction_subject_id' => 'id']],
@@ -206,5 +209,108 @@ class ExamSubject extends \yii\db\ActiveRecord
         $user = Yii::$app->user->identity;
         return $this->hasMany(ExamStudentQuestions::class, ['exam_subject_id' => 'id'])
             ->where(['user_id' => $user->id , 'status' => 1, 'is_deleted' => 0]);
+    }
+
+    public static function confirm($model, $old) {
+        $transaction = Yii::$app->db->beginTransaction();
+        $errors = [];
+
+        $model->exam_id = $old->exam_id;
+        $model->user_id = $old->user_id;
+        $model->student_id = $old->student_id;
+        $model->edu_direction_id = $old->edu_direction_id;
+        $model->direction_id = $old->direction_id;
+        $model->language_id = $old->language_id;
+        $model->edu_type_id = $old->edu_type_id;
+        $model->edu_form_id = $old->edu_form_id;
+        $model->direction_subject_id = $old->direction_subject_id;
+        $model->subject_id = $old->subject_id;
+        $model->ball = $old->ball;
+        $model->file = $old->file;
+
+        if (!$model->validate()) {
+            $errors[] = $model->simple_errors($model->errors);
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
+
+        $directionSubject = $model->directionSubject;
+        if ($model->file_status == 2) {
+            $model->ball = $directionSubject->ball * $directionSubject->count;
+        } else {
+            $questions = ExamStudentQuestions::find()
+                ->where([
+                    'exam_subject_id' => $model->id,
+                    'is_correct' => 1,
+                    'status' => 1,
+                    'is_deleted' => 0
+                ])->count();
+            $model->ball = ($questions * $directionSubject->count);
+        }
+
+        $model->save(false);
+
+        $exam = $model->exam;
+        if ($exam->status == 3) {
+            $exam->ball = $exam->examBall;
+            $exam->save(false);
+        }
+
+        if (count($errors) == 0) {
+            $transaction->commit();
+            return ['is_ok' => true];
+        }else {
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
+    }
+
+    public static function addBall($model, $old) {
+        $transaction = Yii::$app->db->beginTransaction();
+        $errors = [];
+
+        $model->exam_id = $old->exam_id;
+        $model->user_id = $old->user_id;
+        $model->student_id = $old->student_id;
+        $model->edu_direction_id = $old->edu_direction_id;
+        $model->direction_id = $old->direction_id;
+        $model->language_id = $old->language_id;
+        $model->edu_type_id = $old->edu_type_id;
+        $model->edu_form_id = $old->edu_form_id;
+        $model->direction_subject_id = $old->direction_subject_id;
+        $model->subject_id = $old->subject_id;
+        $model->ball = $old->ball;
+        $model->file = $old->file;
+        $model->file_status = $old->file_status;
+
+        if (!$model->validate()) {
+            $errors[] = $model->simple_errors($model->errors);
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
+        $directionSubject = $model->directionSubject;
+        if ($model->add_ball < 0) {
+            $model->add_ball = $model->add_ball * (-1);
+        } elseif ($model->add_ball > $directionSubject->count) {
+            $model->add_ball = $directionSubject->count;
+        }
+
+        $model->ball = $model->add_ball * $directionSubject->ball;
+        $model->save(false);
+
+        $exam = $model->exam;
+        $exam->status = 3;
+        $exam->ball = $exam->examBall;
+        $exam->contract_price = $model->eduDirection->price;
+        $exam->confirm_date = time();
+        $exam->save(false);
+
+        if (count($errors) == 0) {
+            $transaction->commit();
+            return ['is_ok' => true];
+        }else {
+            $transaction->rollBack();
+            return ['is_ok' => false , 'errors' => $errors];
+        }
     }
 }

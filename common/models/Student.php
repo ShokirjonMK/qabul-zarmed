@@ -452,4 +452,21 @@ class Student extends \yii\db\ActiveRecord
 
 
 
+    public function userUpdate($old)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $errors = [];
+
+
+
+        if (count($errors) == 0) {
+            $transaction->commit();
+            return ['is_ok' => true];
+        }
+        $transaction->rollBack();
+        return ['is_ok' => false , 'errors' => $errors];
+    }
+
+
+
 }

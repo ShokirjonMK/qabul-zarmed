@@ -8,6 +8,7 @@ use common\models\StudentPerevot;
 use common\models\StudentMaster;
 use common\models\StudentDtm;
 use common\models\Course;
+use yii\helpers\Url;
 
 
 /** @var yii\web\View $this */
@@ -63,6 +64,19 @@ if ($model->edu_type_id !== null && isset($modelsMap[$model->edu_type_id])) {
             $cont = $eduModel->id;
             $contract = true;
             $contract_price = $eduModel->contract_price;
+        }
+    }
+}
+if ($eduDirection) {
+    if ($eduDirection->is_oferta == 1) {
+        $oferta = StudentOferta::findOne([
+            'edu_direction_id' => $eduDirection->id,
+            'student_id' => $model->id,
+            'status' => 1,
+            'is_deleted' => 0
+        ]);
+        if ($oferta->file_status != 2) {
+            $contract = false;
         }
     }
 }
@@ -181,18 +195,18 @@ if ($model->eduType != null) {
                                         <?php endif; ?>
 
                                         <div class="d-flex gap-3 align-items-center mt-3">
-                                            <?= Html::a(Yii::t('app', 'Tahrirlash'), ['user-update', 'id' => $model->id],
+                                            <?= Html::a(Yii::t('app', 'Tahrirlash'), ['student/user-update', 'id' => $model->id],
                                                 [
                                                     'class' => 'sub_links',
                                                     "data-bs-toggle" => "modal",
-                                                    "data-bs-target" => "#studentUserEdite",
+                                                    "data-bs-target" => "#studentInfo",
                                                 ])
                                             ?>
-                                            <?= Html::a(Yii::t('app', 'SMS habar yuborish'), ['send-sms', 'id' => $model->id],
+                                            <?= Html::a(Yii::t('app', 'SMS habar yuborish'), ['student/send-sms', 'id' => $model->id],
                                                 [
                                                     'class' => 'sub_links',
                                                     "data-bs-toggle" => "modal",
-                                                    "data-bs-target" => "#studentSendSms",
+                                                    "data-bs-target" => "#studentInfo",
                                                 ])
                                             ?>
                                         </div>
@@ -310,16 +324,7 @@ if ($model->eduType != null) {
 
     <?php if ($eduDirection): ?>
         <?php if ($eduDirection->is_oferta == 1): ?>
-            <?php
-                $oferta = StudentOferta::findOne([
-                    'edu_direction_id' => $eduDirection->id,
-                    'student_id' => $model->id,
-                    'status' => 1,
-                    'is_deleted' => 0
-                ]);
-            ?>
             <div class="page-item mb-4">
-
                 <div class="page_title mt-5 mb-3">
                     <h6 class="title-h5">Oferta ma'lumoti</h6>
                 </div>
@@ -454,18 +459,18 @@ if ($model->eduType != null) {
                                                             </div>
 
                                                             <div class="d-flex gap-3 align-items-center mt-3">
-                                                                <?= Html::a(Yii::t('app', 'Transkript yuklash'), ['student-perevot/upload', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Transkript yuklash'), ['student/tr-upload', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrUpload",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ])
                                                                 ?>
-                                                                <?= Html::a(Yii::t('app', 'Transkript tasdiqlash'), ['student-perevot/check', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Transkript tasdiqlash'), ['student/tr-confirm', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrConfirm",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ]) ?>
                                                             </div>
 
@@ -579,24 +584,24 @@ if ($model->eduType != null) {
                                                                 </div>
 
                                                                 <div class="d-flex gap-3 align-items-center mt-3">
-                                                                    <?= Html::a(Yii::t('app', 'Sertifikat yuklash'), ['exam/upload', 'id' => $examSubject->id],
+                                                                    <?= Html::a(Yii::t('app', 'Sertifikat yuklash'), ['student/sertificate-upload', 'id' => $examSubject->id],
                                                                         [
                                                                             'class' => 'sub_links',
                                                                             "data-bs-toggle" => "modal",
-                                                                            "data-bs-target" => "#studentSerUpload",
+                                                                            "data-bs-target" => "#studentInfo",
                                                                         ])
                                                                     ?>
-                                                                    <?= Html::a(Yii::t('app', 'Sertifikat tasdiqlash'), ['exam/confirm', 'id' => $examSubject->id],
+                                                                    <?= Html::a(Yii::t('app', 'Sertifikat tasdiqlash'), ['student/sertificate-confirm', 'id' => $examSubject->id],
                                                                         [
                                                                             'class' => 'sub_links',
                                                                             "data-bs-toggle" => "modal",
-                                                                            "data-bs-target" => "#studentSerConfirm",
+                                                                            "data-bs-target" => "#studentInfo",
                                                                         ]) ?>
-                                                                    <?= Html::a(Yii::t('app', 'Ball berish'), ['student/exam-subject-ball', 'id' => $examSubject->id],
+                                                                    <?= Html::a(Yii::t('app', 'Ball berish'), ['student/add-ball', 'id' => $examSubject->id],
                                                                         [
                                                                             'class' => 'sub_links',
                                                                             "data-bs-toggle" => "modal",
-                                                                            "data-bs-target" => "#studentAddBall",
+                                                                            "data-bs-target" => "#studentInfo",
                                                                         ]) ?>
                                                                 </div>
 
@@ -635,18 +640,18 @@ if ($model->eduType != null) {
                                                             </div>
 
                                                             <div class="d-flex gap-3 align-items-center mt-3">
-                                                                <?= Html::a(Yii::t('app', 'Fayl yuklash'), ['student-perevot/upload3', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Fayl yuklash'), ['student/dtm-upload', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrUpload",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ])
                                                                 ?>
-                                                                <?= Html::a(Yii::t('app', 'Faylni tasdiqlash'), ['student-perevot/check3', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Faylni tasdiqlash'), ['student/dtm-confirm', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrConfirm",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ]) ?>
                                                             </div>
 
@@ -684,18 +689,18 @@ if ($model->eduType != null) {
                                                             </div>
 
                                                             <div class="d-flex gap-3 align-items-center mt-3">
-                                                                <?= Html::a(Yii::t('app', 'Fayl yuklash'), ['student-perevot/upload4', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Fayl yuklash'), ['student/master-upload', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrUpload",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ])
                                                                 ?>
-                                                                <?= Html::a(Yii::t('app', 'Faylni tasdiqlash'), ['student-perevot/check4', 'id' => $eduModel->id],
+                                                                <?= Html::a(Yii::t('app', 'Faylni tasdiqlash'), ['student/master-confirm', 'id' => $eduModel->id],
                                                                     [
                                                                         'class' => 'sub_links',
                                                                         "data-bs-toggle" => "modal",
-                                                                        "data-bs-target" => "#studentTrConfirm",
+                                                                        "data-bs-target" => "#studentInfo",
                                                                     ]) ?>
                                                             </div>
 
@@ -720,6 +725,46 @@ if ($model->eduType != null) {
         </div>
 
     </div>
+
+    <?php if ($contract) : ?>
+        <div class="page-item mb-4">
+            <div class="page_title mt-5 mb-3">
+                <h6 class="title-h5">Shartnoma</h6>
+                <h6 class="title-link">
+                    <?= Html::a(Yii::t('app', 'Tahrirlash'), ['contract-update',  'id' => $cont , 'type' => $model->edu_type_id , 'std_id' => $model->id],
+                        [
+                            "data-bs-toggle" => "modal",
+                            "data-bs-target" => "#studentInfo",
+                        ])
+                    ?>
+                </h6>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="form-section">
+                        <div class="form-section_item">
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="view-info-right">
+                                        <p>Ikki tomonlama shartnoma &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <?= number_format((int)$contract_price, 0, '', ' ') .' so‘m' ?> </p>
+                                        <h6><a href="<?= Url::to(['student/contract-load' , 'id' => $model->id , 'type' => 2]) ?>">Yuklash uchun bosing</a></h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="view-info-right">
+                                        <p>Uch tomonlama shartnoma &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <?= number_format((int)$contract_price, 0, '', ' ') .' so‘m' ?></p>
+                                        <h6>
+                                            <h6><a href="<?= Url::to(['student/contract-load' , 'id' => $model->id , 'type' => 3]) ?>">Yuklash uchun bosing</a></h6>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 
