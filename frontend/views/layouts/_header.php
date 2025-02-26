@@ -27,7 +27,7 @@ $flagMap = [
         <div class="mb_head d-flex justify-content-between align-items-center">
             <div class="mb_head_left">
                 <a href="<?= Url::to(['site/index']) ?>">
-                    <img src="/frontend/web/images/white_l.svg" alt="">
+                    <img src="/frontend/web/images/logo_new.png" alt="">
                 </a>
             </div>
             <div class="mb_head_right">
@@ -162,7 +162,7 @@ $flagMap = [
         <div class="offSidebarItemSecond">
             <div class="offcanvas-header">
                 <h5 id="offcanvasRightLabel">
-                    <img src="/frontend/web/images/logo_blue.svg" alt="">
+                    <img src="/frontend/web/images/logo_blue.png" alt="">
                 </h5>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>

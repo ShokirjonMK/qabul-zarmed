@@ -169,7 +169,7 @@
     text-transform: uppercase;
     font-weight: bold;
     background: rgb(219,231,255);
-    background: linear-gradient(0deg, rgba(219,231,255,1) 0%, rgba(20,65,118,1) 42%);
+    background: linear-gradient(0deg, rgba(219,231,255,1) 0%, rgba(9,88,142,1) 42%);
 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1085,7 +1085,7 @@ ul.pagination {
 
 .offcanvas {
     /*background: rgb(247,249,255);*/
-    /*background: linear-gradient(0deg, rgba(247,249,255,1) 0%, rgba(20,65,118,1) 50%);*/
+    /*background: linear-gradient(0deg, rgba(247,249,255,1) 0%, rgba(9,88,142,1) 50%);*/
 }
 
 .off_head {

@@ -467,6 +467,19 @@ class Student extends \yii\db\ActiveRecord
         return ['is_ok' => false , 'errors' => $errors];
     }
 
+    public function contractUpdate($model , $type)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        $errors = [];
 
+
+
+        if (count($errors) == 0) {
+            $transaction->commit();
+            return ['is_ok' => true];
+        }
+        $transaction->rollBack();
+        return ['is_ok' => false , 'errors' => $errors];
+    }
 
 }

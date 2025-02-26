@@ -215,8 +215,8 @@
 .step_info {
     padding: 30px 30px 10px 30px;
     border-radius: 10px;
-    background: rgb(20,65,118);
-    background: linear-gradient(0deg, rgba(20,65,118,0.8939950980392157) 50%, rgba(255,255,255,1) 100%);
+    background: rgb(9,88,142);
+    background: linear-gradient(0deg, rgba(9,88,142,0.8939950980392157) 50%, rgba(255,255,255,1) 100%);
 }
 .step_info p {
     color: #fff;
@@ -312,8 +312,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgb(20,65,118);
-    background: linear-gradient(180deg, rgba(20,65,118,0.9051995798319328) 30%, rgba(255,255,255,1) 100%);
+    background: rgb(9,88,142);
+    background: linear-gradient(180deg, rgba(9,88,142,0.9051995798319328) 30%, rgba(255,255,255,1) 100%);
 
 }
 

@@ -397,6 +397,13 @@ if ($model->eduType != null) {
 
                                 <div class="col-md-4 col-12 mb-4">
                                     <div class="view-info-right">
+                                        <p>Filial</p>
+                                        <h6><?= $model->branch->name_uz ?></h6>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-12 mb-4">
+                                    <div class="view-info-right">
                                         <p>Yo'nalish nomi</p>
                                         <h6><?= $direction->code.' - '.$direction->name_uz ?></h6>
                                     </div>

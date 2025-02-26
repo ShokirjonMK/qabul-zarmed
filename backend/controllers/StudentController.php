@@ -6,6 +6,7 @@ use backend\models\Passport;
 use common\models\ConfirmFile;
 use common\models\EduDirection;
 use common\models\EduType;
+use common\models\Exam;
 use common\models\ExamSubject;
 use common\models\StepOne;
 use common\models\StepThreeFour;
@@ -574,6 +575,44 @@ class StudentController extends Controller
 
         return $pdf->render();
     }
+
+
+    public function actionContractUpdate($id, $type)
+    {
+        $models = [
+            1 => Exam::class,
+            2 => StudentPerevot::class,
+            3 => StudentDtm::class,
+            4 => StudentMaster::class,
+        ];
+
+        $modelClass = $models[$type] ?? null;
+        if (!$modelClass || !($model = $modelClass::findOne($id))) {
+            return $this->renderAjax('contract-update', ['model' => null]);
+        }
+
+        if (($type == 1 && $model->status != 3) || ($type != 1 && $model->file_status != 2)) {
+            return $this->renderAjax('contract-update', ['model' => null]);
+        }
+
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            if ($model->load($post)) {
+                $result = Student::contractUpdate($model);
+                if ($result['is_ok']) {
+                    \Yii::$app->session->setFlash('success');
+                } else {
+                    \Yii::$app->session->setFlash('error' , $result['errors']);
+                }
+                return $this->redirect(['view', 'id' => $model->student_id]);
+            }
+        }
+
+        return $this->renderAjax('contract-update', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Student model based on its primary key value.

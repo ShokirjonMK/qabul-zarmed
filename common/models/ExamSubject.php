@@ -269,6 +269,9 @@ class ExamSubject extends \yii\db\ActiveRecord
         $transaction = Yii::$app->db->beginTransaction();
         $errors = [];
 
+        $eduDirection = $model->eduDirection;
+        $student = $model->student;
+
         $model->exam_id = $old->exam_id;
         $model->user_id = $old->user_id;
         $model->student_id = $old->student_id;
@@ -295,13 +298,25 @@ class ExamSubject extends \yii\db\ActiveRecord
             $model->add_ball = $directionSubject->count;
         }
 
+        if ($eduDirection->is_oferta == 1) {
+            $oferta = StudentOferta::findOne([
+                'student_id' => $student->id,
+                'edu_direction_id' => $eduDirection->id,
+                'file_status' => 2,
+                'is_deleted' => 0
+            ]);
+            if (!$oferta) {
+                $errors[] = ['Oferta tasdiqlanmagan.'];
+            }
+        }
+
         $model->ball = $model->add_ball * $directionSubject->ball;
         $model->save(false);
 
         $exam = $model->exam;
         $exam->status = 3;
         $exam->ball = $exam->examBall;
-        $exam->contract_price = $model->eduDirection->price;
+        $exam->contract_price = $eduDirection->price;
         $exam->confirm_date = time();
         $exam->save(false);
 

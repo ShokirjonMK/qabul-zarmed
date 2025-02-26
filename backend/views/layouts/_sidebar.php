@@ -4,7 +4,7 @@ use common\models\EduType;
 
 $user = Yii::$app->user->identity;
 $role = $user->authItem;
-$logo = "/frontend/web/images/logo_blue.svg";
+$logo = "/frontend/web/images/logo_blue.png";
 
 function getActive($cont, $act)
 {

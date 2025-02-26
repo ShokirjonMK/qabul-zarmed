@@ -2,10 +2,10 @@
 <div class="pageLoading">
     <div class="circle">
         <div class="logo">
-            <img src="/frontend/web/images/wh_logo.svg" alt="">
+            <img src="/frontend/web/images/logo_blue.png" alt="">
         </div>
         <div class="circle-text2">
-            <p>TASHKENT * PERFECT * UNIVERSITY *</p>
+            <p>QABUL * ZARMED * UNIVERSITY *</p>
         </div>
     </div>
 </div>

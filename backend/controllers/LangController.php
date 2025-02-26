@@ -61,28 +61,6 @@ class LangController extends Controller
     }
 
     /**
-     * Creates a new Lang model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new Lang();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Updates an existing Lang model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
@@ -111,7 +89,9 @@ class LangController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->is_deleted = 1;
+        $model->save(false);
 
         return $this->redirect(['index']);
     }
@@ -125,10 +105,10 @@ class LangController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Lang::findOne(['id' => $id])) !== null) {
+        if (($model = Lang::findOne(['id' => $id, 'is_deleted' => 0])) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
     }
 }

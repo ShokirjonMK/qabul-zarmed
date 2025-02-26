@@ -10,8 +10,8 @@ $this->title = 'GLOBAL SOFTLINE UNIVERSITY';
     <div class="ban_content">
         <div class="banner">
             <div class="banner-center" data-aos="fade-up" data-aos-duration="3000">
-                <h3>GLOBAL</h3>
-                <h1>SOFTLINE</h1>
+<!--                <h3>GLOBAL</h3>-->
+                <h1>ZARMED</h1>
                 <h3>UNIVERSITY <span><?= Yii::t("app" , "a11") ?></span></h3>
                 <div class="banner-link">
                     <a href="<?= Url::to(['site/login']) ?>">
@@ -31,10 +31,10 @@ $this->title = 'GLOBAL SOFTLINE UNIVERSITY';
             <div class="banner-logo">
                 <div class="circle">
                     <div class="logo">
-                        <img src="/frontend/web/images/wh_logo.svg" alt="">
+                        <img src="/frontend/web/images/logo_blue.png" alt="">
                     </div>
                     <div class="circle-text">
-                        <p>GLOBAL * SOFTLINE * UNIVERSITY *</p>
+                        <p>QABUL * ZARMED * UNIVERSITY *</p>
                     </div>
                 </div>
             </div>

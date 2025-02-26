@@ -32,8 +32,8 @@ function getActive($cont, $act)
         <?php $this->registerCsrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
-        <link href="/admin/edu-assets/image/home-image/logo.svg" rel="icon">
-        <link href="/admin/edu-assets/image/home-image/logo.svg" rel="apple-touch-icon">
+        <link href="/frontend/web/images/logo_blue.png" rel="icon">
+        <link href="/frontend/web/images/logo_blue.png" rel="apple-touch-icon">
         <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     </head>
     <body>

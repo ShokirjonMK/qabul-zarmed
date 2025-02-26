@@ -85,13 +85,7 @@ $breadcrumbs['item'][] = [
                         ]);
                     },
                     'delete' => function ($url, $model) {
-                        $url = Url::to(['delete', 'id' => $model->id]);
-                        return Html::a('<i class="fa fa-trash"></i>', $url, [
-                            'title' => 'delete',
-                            'class' => 'tableIcon',
-                            'data-confirm' => Yii::t('yii', 'Ma\'lumotni o\'chirishni xoxlaysizmi?'),
-                            'data-method'  => 'post',
-                        ]);
+                        return false;
                     },
                 ],
             ],
