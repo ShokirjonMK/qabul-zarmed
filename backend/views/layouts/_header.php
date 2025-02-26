@@ -10,7 +10,7 @@ $logo = "/frontend/web/images/sarbon_icon.svg";
 $employee = Employee::findOne(['user_id' => $user->id]);
 $full_name = $employee->last_name . " " . $employee->first_name;
 $postion = $user->authItem->description;
-//$cons = $user->cons;
+$cons = $user->cons;
 ?>
 
 <div class="main_nav">
@@ -85,8 +85,8 @@ $postion = $user->authItem->description;
         </div>
         <div class="education-name">
             <h2>
-                <a href="/">
-                    ZARMED UNIVERSITETI
+                <a href="#">
+                    ZARMED UNIVERSITETI ( <?= $cons->name ?> )
                 </a>
             </h2>
         </div>
