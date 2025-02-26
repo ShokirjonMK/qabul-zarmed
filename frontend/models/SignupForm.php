@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\AuthAssignment;
+use common\models\Consulting;
 use common\models\Message;
 use common\models\Student;
 use common\models\Target;
@@ -119,6 +120,17 @@ class SignupForm extends Model
             $user->sms_number = rand(100000, 999999);
             $user->status = 9;
             $sms = true;
+
+            $domen = $_SERVER['HTTP_HOST'];
+
+            $cons = Consulting::find()
+                ->where(['like', 'domain', $domen, false])
+                ->one();
+            if ($cons) {
+                $user->cons_id = $cons->id;
+            } else {
+                $user->cons_id = 1;
+            }
 
             if ($user->save(false)) {
                 $newAuth = new AuthAssignment();
