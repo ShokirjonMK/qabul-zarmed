@@ -63,6 +63,7 @@ class StepOne extends Model
                 ->setMethod('POST')
                 ->setUrl($url)
                 ->setData($params)
+                ->addHeaders(['content-type' => 'application/json'])
                 ->send();
 
             dd($response);
