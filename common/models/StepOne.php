@@ -66,6 +66,8 @@ class StepOne extends Model
                 ->addHeaders(['content-type' => 'application/json'])
                 ->send();
 
+            dd($response);
+
             if ($response->isOk) {
                 $data = $response->data;
                 dd($data);
