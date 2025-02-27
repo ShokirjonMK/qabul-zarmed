@@ -69,19 +69,15 @@ class StepOne extends Model
             if ($response->data) {
                 $data = $response->data;
                 if ($data['status'] == 1) {
-                    dd($data);
-                    $student->first_name = $first_name;
-                    $student->last_name = $last_name;
-                    $student->middle_name = $middle_name;
-                    $student->passport_number = $number;
-                    $student->passport_serial = $seria;
-                    $student->passport_pin = $pin;
-
-                    $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
-                    $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
-                    $student->passport_given_by = $given_by;
-                    $student->birthday = $birthday;
-                    $student->gender = $jins;
+                    $data = $data['data'];
+                    $student->first_name = $data['first_name'];
+                    $student->last_name = $data['last_name'];
+                    $student->middle_name = $data['middle_name'];
+                    $student->passport_number = $data['passport_number'];
+                    $student->passport_serial = $data['passport_serial'];
+                    $student->passport_pin = $data['passport_pin'];
+                    $student->birthday = $data['birthday'];
+                    $student->gender = $data['gender'];
                     if (!$student->validate()){
                         $errors[] = $this->simple_errors($student->errors);
                     }
