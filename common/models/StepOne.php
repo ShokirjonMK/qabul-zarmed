@@ -56,7 +56,7 @@ class StepOne extends Model
             $url = 'https://payme.z7.uz/ik/get-passport';
 
             $params = [
-                'passport_pin' => '12345678901234',
+                'passport_pin' => $this->jshshr,
             ];
 
             $response = $client->createRequest()
