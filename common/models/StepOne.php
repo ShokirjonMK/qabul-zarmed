@@ -50,7 +50,7 @@ class StepOne extends Model
 
         if ($pinfl != $this->jshshr) {
 
-//            self::deleteNull($student->id);
+            self::deleteNull($student->id);
 
             $client = new Client();
             $url = 'https://payme.z7.uz/ik/get-passport';
@@ -66,26 +66,24 @@ class StepOne extends Model
                 ->addHeaders(['content-type' => 'application/json'])
                 ->send();
 
-            dd($response->data);
-
-            if ($response->isOk) {
+            if ($response->data) {
                 $data = $response->data;
-                dd($data);
-
-                $student->first_name = $first_name;
-                $student->last_name = $last_name;
-                $student->middle_name = $middle_name;
-                $student->passport_number = $number;
-                $student->passport_serial = $seria;
-                $student->passport_pin = $pin;
-
-                $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
-                $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
-                $student->passport_given_by = $given_by;
-                $student->birthday = $birthday;
-                $student->gender = $jins;
-                if (!$student->validate()){
-                    $errors[] = $this->simple_errors($student->errors);
+                if ($data['status'] == 1) {
+                    $data = $data['data'];
+                    $student->first_name = $data['first_name'];
+                    $student->last_name = $data['last_name'];
+                    $student->middle_name = $data['middle_name'];
+                    $student->passport_number = $data['passport_number'];
+                    $student->passport_serial = $data['passport_serial'];
+                    $student->passport_pin = $data['passport_pin'];
+                    $student->birthday = $data['birthday'];
+                    $student->gender = $data['gender'];
+                    if (!$student->validate()){
+                        $errors[] = $this->simple_errors($student->errors);
+                    }
+                } else {
+                    $transaction->rollBack();
+                    return ['is_ok' => false, 'errors' => $data['errors']];
                 }
             } else {
                 $errors[] = ['Ma\'lumotlarni olishda xatolik yuz berdi.'];
@@ -94,8 +92,8 @@ class StepOne extends Model
         }
 
         $student->update(false);
-//        $user->step = 2;
-//        $user->update(false);
+        $user->step = 2;
+        $user->update(false);
 
         if (count($errors) == 0) {
             $transaction->commit();
