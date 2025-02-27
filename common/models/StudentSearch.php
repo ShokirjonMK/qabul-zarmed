@@ -257,28 +257,25 @@ class StudentSearch extends Student
         $query = Student::find()
             ->alias('s')
             ->innerJoin(User::tableName() . ' u', 's.user_id = u.id')
-            ->innerJoin(Exam::tableName() . ' e', 's.id = e.student_id AND e.status = 3')
+            ->leftJoin(Exam::tableName() . ' e', 's.id = e.student_id AND e.status = 3 AND e.is_deleted = 0')
+            ->leftJoin(StudentPerevot::tableName() . ' sp', 's.id = sp.student_id AND sp.file_status = 2 AND sp.is_deleted = 0')
+            ->leftJoin(StudentDtm::tableName() . ' sd', 's.id = sd.student_id AND sd.file_status = 2 AND sd.is_deleted = 0')
+            ->leftJoin(StudentMaster::tableName() . ' sm', 's.id = sm.student_id AND sm.file_status = 2 AND sm.is_deleted = 0')
             ->where([
                 'u.step' => 5,
                 'u.status' => [9, 10],
                 'u.user_role' => 'student',
-                'u.cons_id' => $user->cons_id
+                'u.cons_id' => $user->cons_id,
+                's.is_deleted' => 0,
+            ])
+            ->andWhere([
+                'or',
+                ['not', ['e.student_id' => null]],
+                ['not', ['sp.student_id' => null]],
+                ['not', ['sd.student_id' => null]],
+                ['not', ['sm.student_id' => null]]
             ]);
 
-        // StudentPerevot, StudentDtm, StudentMaster jadvallariga LEFT JOIN qo‘shamiz
-        $query->leftJoin(StudentPerevot::tableName() . ' sp', 's.id = sp.student_id AND sp.file_status = 2 AND sp.status = 1 AND sp.is_deleted = 0');
-        $query->leftJoin(StudentDtm::tableName() . ' sd', 's.id = sd.student_id AND sd.file_status = 2 AND sd.status = 1 AND sd.is_deleted = 0');
-        $query->leftJoin(StudentMaster::tableName() . ' sm', 's.id = sm.student_id AND sm.file_status = 2 AND sm.status = 1 AND sm.is_deleted = 0');
-
-        // Kamida bitta jadvalda ma'lumot bo'lsa natijaga qo'shish
-        $query->andWhere([
-            'or',
-            ['not', ['sp.student_id' => null]],
-            ['not', ['sd.student_id' => null]],
-            ['not', ['sm.student_id' => null]]
-        ]);
-
-        // Ma'lumotlarni chiqarish uchun ActiveDataProvider
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -302,7 +299,6 @@ class StudentSearch extends Student
             's.updated_at' => $this->updated_at,
             's.created_by' => $this->created_by,
             's.updated_by' => $this->updated_by,
-            's.is_deleted' => $this->is_deleted,
             's.edu_type_id' => $this->edu_type_id,
             's.edu_form_id' => $this->edu_form_id,
             's.direction_id' => $this->direction_id,

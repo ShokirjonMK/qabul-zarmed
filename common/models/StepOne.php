@@ -52,39 +52,22 @@ class StepOne extends Model
 
             self::deleteNull($student->id);
 
-            $url = 'https://subsidiya.idm.uz/api/applicant/get-photo';
+            $client = new Client();
+            $url = 'https://payme.z7.uz/ik/get-passport';
 
-            $data = json_encode([
-                'pinfl' => $this->jshshr
-            ]);
+            $params = [
+                'passport_pin' => '12345678901234',
+            ];
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Authorization: Basic ' . base64_encode('ikbol:ikbol123321')
-            ]);
+            $response = $client->createRequest()
+                ->setMethod('POST')
+                ->setUrl($url)
+                ->setData($params)
+                ->send();
 
-            $response = curl_exec($ch);
-            $response = json_decode($response, true);
-            curl_close($ch);
-            $photoBase64 = $response['data']['photo'] ?? null;
-
-            if ($photoBase64) {
-                $pin = $response['data']['pinfl'] ?? null;
-                $seria = $response['data']['docSeria'] ?? null;
-                $number = $response['data']['docNumber'] ?? null;
-                $last_name = $response['data']['surnameLatin'] ?? null;
-                $first_name = $response['data']['nameLatin'] ?? null;
-                $middle_name = $response['data']['patronymLatin'] ?? null;
-                $birthday = $response['data']['birthDate'] ?? null;
-                $b_date = $response['data']['docDateBegin'] ?? null;
-                $e_date = $response['data']['docDateEnd'] ?? null;
-                $given_by = $response['data']['docGivePlace'] ?? null;
-                $jins = $response['data']['sex'] ?? null;
+            if ($response->isOk) {
+                $data = $response->data;
+                dd($data);
 
                 $student->first_name = $first_name;
                 $student->last_name = $last_name;
@@ -104,6 +87,7 @@ class StepOne extends Model
             } else {
                 $errors[] = ['Ma\'lumotlarni olishda xatolik yuz berdi.'];
             }
+
         }
 
         $student->update(false);

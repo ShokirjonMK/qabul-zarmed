@@ -415,7 +415,6 @@ class Student extends \yii\db\ActiveRecord
         $eduRecord = $eduModels[$this->edu_type_id]::findOne([
             'student_id' => $this->id,
             'edu_direction_id' => $this->edu_direction_id,
-            'status' => 1,
             'is_deleted' => 0
         ]);
 
@@ -467,12 +466,13 @@ class Student extends \yii\db\ActiveRecord
         return ['is_ok' => false , 'errors' => $errors];
     }
 
-    public function contractUpdate($model , $type)
+    public static function contractUpdate($query, $model)
     {
         $transaction = Yii::$app->db->beginTransaction();
         $errors = [];
 
-
+        $query->contract_price = $model->price;
+        $query->save(false);
 
         if (count($errors) == 0) {
             $transaction->commit();

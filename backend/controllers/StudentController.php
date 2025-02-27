@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Passport;
 use common\models\ConfirmFile;
+use common\models\Contract;
 use common\models\EduDirection;
 use common\models\EduType;
 use common\models\Exam;
@@ -579,6 +580,8 @@ class StudentController extends Controller
 
     public function actionContractUpdate($id, $type)
     {
+        $model = new Contract();
+
         $models = [
             1 => Exam::class,
             2 => StudentPerevot::class,
@@ -587,29 +590,24 @@ class StudentController extends Controller
         ];
 
         $modelClass = $models[$type] ?? null;
-        if (!$modelClass || !($model = $modelClass::findOne($id))) {
-            return $this->renderAjax('contract-update', ['model' => null]);
-        }
-
-        if (($type == 1 && $model->status != 3) || ($type != 1 && $model->file_status != 2)) {
-            return $this->renderAjax('contract-update', ['model' => null]);
-        }
+        $query = $modelClass::findOne($id);
 
         if ($this->request->isPost) {
             $post = $this->request->post();
             if ($model->load($post)) {
-                $result = Student::contractUpdate($model);
+                $result = Student::contractUpdate($query, $model);
                 if ($result['is_ok']) {
                     \Yii::$app->session->setFlash('success');
                 } else {
                     \Yii::$app->session->setFlash('error' , $result['errors']);
                 }
-                return $this->redirect(['view', 'id' => $model->student_id]);
+                return $this->redirect(['view', 'id' => $query->student_id]);
             }
         }
 
         return $this->renderAjax('contract-update', [
             'model' => $model,
+            'query' => $query,
         ]);
     }
 
