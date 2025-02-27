@@ -57,6 +57,7 @@ class StepOne extends Model
 
             $params = [
                 'passport_pin' => $this->jshshr,
+                'phone' => $student->username,
             ];
 
             $response = $client->createRequest()
