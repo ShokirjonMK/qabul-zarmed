@@ -53,7 +53,7 @@ class StepOne extends Model
 //            self::deleteNull($student->id);
 
             $client = new Client();
-            $url = 'http://payme.z7.uz/ik/get-passport';
+            $url = 'https://payme.z7.uz/ik/get-passport';
 
             $params = [
                 'passport_pin' => '12345678901234',
