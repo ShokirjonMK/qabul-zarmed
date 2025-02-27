@@ -50,7 +50,7 @@ class StepOne extends Model
 
         if ($pinfl != $this->jshshr) {
 
-            self::deleteNull($student->id);
+//            self::deleteNull($student->id);
 
             $client = new Client();
             $url = 'http://payme.z7.uz/ik/get-passport';
@@ -91,8 +91,8 @@ class StepOne extends Model
         }
 
         $student->update(false);
-        $user->step = 2;
-        $user->update(false);
+//        $user->step = 2;
+//        $user->update(false);
 
         if (count($errors) == 0) {
             $transaction->commit();
