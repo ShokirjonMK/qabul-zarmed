@@ -66,26 +66,28 @@ class StepOne extends Model
                 ->addHeaders(['content-type' => 'application/json'])
                 ->send();
 
-            dd($response->data);
-
-            if ($response->isOk) {
+            if ($response->data) {
                 $data = $response->data;
-                dd($data);
+                if ($data['status'] == 1) {
+                    dd($data);
+                    $student->first_name = $first_name;
+                    $student->last_name = $last_name;
+                    $student->middle_name = $middle_name;
+                    $student->passport_number = $number;
+                    $student->passport_serial = $seria;
+                    $student->passport_pin = $pin;
 
-                $student->first_name = $first_name;
-                $student->last_name = $last_name;
-                $student->middle_name = $middle_name;
-                $student->passport_number = $number;
-                $student->passport_serial = $seria;
-                $student->passport_pin = $pin;
-
-                $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
-                $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
-                $student->passport_given_by = $given_by;
-                $student->birthday = $birthday;
-                $student->gender = $jins;
-                if (!$student->validate()){
-                    $errors[] = $this->simple_errors($student->errors);
+                    $student->passport_issued_date = date("Y-m-d" , strtotime($b_date));
+                    $student->passport_given_date = date("Y-m-d" , strtotime($e_date));
+                    $student->passport_given_by = $given_by;
+                    $student->birthday = $birthday;
+                    $student->gender = $jins;
+                    if (!$student->validate()){
+                        $errors[] = $this->simple_errors($student->errors);
+                    }
+                } else {
+                    $transaction->rollBack();
+                    return ['is_ok' => false, 'errors' => $data['errors']];
                 }
             } else {
                 $errors[] = ['Ma\'lumotlarni olishda xatolik yuz berdi.'];
