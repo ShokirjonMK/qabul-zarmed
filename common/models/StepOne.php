@@ -65,6 +65,8 @@ class StepOne extends Model
                 ->setData($params)
                 ->send();
 
+            dd($response);
+
             if ($response->isOk) {
                 $data = $response->data;
                 dd($data);
