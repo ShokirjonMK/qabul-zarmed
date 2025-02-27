@@ -53,10 +53,10 @@ class StepOne extends Model
 //            self::deleteNull($student->id);
 
             $client = new Client();
-            $url = 'http://payme.z7.uz/ik/get-passport';
+            $url = 'https://payme.z7.uz/ik/get-passport';
 
             $params = [
-                'passport_pin' => '12345678901234',
+                'passport_pin' => $this->jshshr,
             ];
 
             $response = $client->createRequest()
@@ -65,8 +65,6 @@ class StepOne extends Model
                 ->setData($params)
                 ->addHeaders(['content-type' => 'application/json'])
                 ->send();
-
-            dd($response);
 
             if ($response->isOk) {
                 $data = $response->data;
