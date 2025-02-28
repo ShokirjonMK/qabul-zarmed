@@ -167,6 +167,18 @@ class Status
         return $data[$id];
     }
 
+    public static function fileStatus($id = null)
+    {
+        $statuses = [
+            0 => 'File yo\'q',
+            1 => 'Kelib tushgan',
+            2 => 'Tasdiqlandi',
+            3 => 'Bekor qilindi',
+        ];
+
+        return $id === null ? $statuses : ($statuses[$id] ?? null);
+    }
+
     public static function perStatus()
     {
         return [

@@ -162,6 +162,31 @@ $eduTypes = EduType::find()
                     </div>
                 </li>
 
+                <li class="sidebar_li sidebar_drop">
+                    <a href="javascript: void(0);" class="sidebar_li_link">
+                        <i class="i-n fa-solid fa-graduation-cap"></i>
+                        <span>
+                            Yuborilgan fayllar
+                        </span>
+                        <i class="icon-n fa-solid fa-chevron-right"></i>
+                    </a>
+                    <div class="menu_drop">
+                        <ul class="sub_menu_ul">
+                            <li class="sub_menu_li">
+                                <a href="<?= Url::to(['exam-subject/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
+                                    Sertifikat
+                                </a>
+                            </li>
+                            <li class="sub_menu_li">
+                                <a href="<?= Url::to(['student-oferta/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
+                                    Oferta
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+
                 <li class="sidebar_li">
                     <a href="<?= Url::to(['student/chala']) ?>" class="sidebar_li_link">
                         <i class="i-n fa-solid fa-user-group"></i>
