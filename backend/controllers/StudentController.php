@@ -58,7 +58,6 @@ class StudentController extends Controller
     public function actionIndex($id)
     {
         $eduType = $this->eduTypeFindModel($id);
-
         $searchModel = new StudentSearch();
         $dataProvider = $searchModel->search($this->request->queryParams , $eduType);
 
