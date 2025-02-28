@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var common\models\ConsultingSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = '';
+$this->title = 'Hamkorlar';
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
@@ -56,6 +56,14 @@ $breadcrumbs['item'][] = [
                'value' => function($model) {
                    return $model->hr;
                },
+            ],
+            [
+                'attribute' => 'code',
+                'contentOptions' => ['date-label' => 'code'],
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->code;
+                },
             ],
             [
                 'class' => ActionColumn::className(),

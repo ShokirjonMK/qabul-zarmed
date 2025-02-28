@@ -13,7 +13,7 @@ $breadcrumbs['item'][] = [
 ];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Hamkorlar'),
-    'url' => ['/'],
+    'url' => ['index'],
 ];
 ?>
 <div class="page">

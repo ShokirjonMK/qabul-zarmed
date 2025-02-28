@@ -127,9 +127,15 @@ class ConsultingController extends Controller
      */
     public function actionDelete($id)
     {
+        $errors = [];
         $model = $this->findModel($id);
-        $model->is_deleted = 1;
-        $model->save(false);
+        if ($model->id == 1) {
+            $errors[] = ['Bu ma\'lumotni o\'chirib bo\'lmaydi'];
+            \Yii::$app->session->setFlash('error' , $errors);
+        } else {
+            $model->is_deleted = 1;
+            $model->save(false);
+        }
 
         return $this->redirect(['index']);
     }
