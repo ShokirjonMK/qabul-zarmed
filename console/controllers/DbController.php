@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\Permission;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
@@ -97,8 +98,23 @@ class DbController extends Controller
         return ucfirst( strtolower(Inflector::camel2words(Inflector::id2camel($controller . '|' . $action))));
     }
 
-
-
-
-
+    public function actionSup()
+    {
+        $actions = Actions::find()
+            ->where(['status' => 0])
+            ->all();
+        foreach ($actions as $action) {
+            $query = Permission::findOne([
+                'role_name' => 'super_admin',
+                'action_id' => $action->id
+            ]);
+            if (!$query) {
+                $new = new Permission();
+                $new->role_name = 'super_admin';
+                $new->action_id = $action->id;
+                $new->status = 1;
+                $new->save(false);
+            }
+        }
+    }
 }

@@ -41,19 +41,8 @@ $breadcrumbs['item'][] = [
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <?= $form->field($model, 'name_uz')->textInput(['maxlength' => true]) ?>
+                        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                     </div>
-                    <div class="form-group">
-                        <?= $form->field($model, 'name_en')->textInput(['maxlength' => true]) ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $form->field($model, 'name_ru')->textInput(['maxlength' => true]) ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $form->field($model, 'name_kr')->textInput(['maxlength' => true]) ?>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <?= $form->field($model, 'action_id')->widget(Select2::classname(), [
                             'data' => ArrayHelper::map(Actions::find()->all(), 'id', 'description'),
@@ -61,9 +50,11 @@ $breadcrumbs['item'][] = [
                         ]);
                         ?>
                     </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <?= $form->field($model, 'parent_id')->widget(Select2::classname(), [
-                            'data' => ArrayHelper::map(Menu::find()->where(['status' => 0])->all(), 'id', 'name_uz'),
+                            'data' => ArrayHelper::map(Menu::find()->where(['status' => 0])->all(), 'id', 'name'),
                             'options' => ['placeholder' => 'Select a state ...'],
                         ]);
                         ?>

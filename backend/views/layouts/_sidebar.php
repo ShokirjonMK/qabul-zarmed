@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Url;
 use common\models\EduType;
+use common\models\Menu;
+use common\models\Permission;
 
 $user = Yii::$app->user->identity;
 $role = $user->authItem;
@@ -45,8 +47,11 @@ function getActiveTwo($cont, $act)
     }
 }
 
-$eduTypes = EduType::find()
-    ->where(['is_deleted' => 0])
+$menu = Menu::find()
+    ->where([
+        'status' => 0
+    ])
+    ->orderBy('order asc')
     ->all();
 ?>
 
@@ -64,187 +69,67 @@ $eduTypes = EduType::find()
 
         <div class="sidebar_menu">
             <ul class="sidebar_ul">
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['/']) ?>" class="sidebar_li_link <?= getActiveTwo( 'site', ''); ?>">
-                        <i class="i-n fa-solid fa-house"></i>
-                        <span>Bosh sahifa</span>
-                    </a>
-                </li>
 
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['consulting/index']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Hamkorlar</span>
-                    </a>
-                </li>
+                <?php foreach ($menu as $item) : ?>
+                    <?php
+                    $activeClass = "";
+                    $activeStyle = "";
+                    $drop = false;
+                    if ($item->action_id == null) {
+                        $drop = true;
+                        $subMenus = Menu::find()
+                            ->where([
+                                'parent_id' => $item->id,
+                                'status' => 1
+                            ])
+                            ->orderBy('order asc')
+                            ->all();
+                        if (isset($subMenus)) {
+                            foreach ($subMenus as $style) {
+                                $activeClass = $activeClass . getActive($style->action->controller, $style->action->action)['class']. " ";
+                                $activeStyle = $activeStyle . getActive($style->action->controller, $style->action->action)['style']. " ";
+                            }
+                        }
+                    }
+                    if (!$drop) {
+                        $isPermission = Permission::isPermission($item->action_id, $user);
+                    }
+                    ?>
 
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['employee/index']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Xodimlar</span>
-                    </a>
-                </li>
+                    <?php if ($isPermission) : ?>
+                        <li class="sidebar_li <?php if ($drop) { echo "sidebar_drop";} echo $activeClass;?> ">
+                            <a href="<?php if ($drop) { echo "javascript: void(0);";} else { echo Url::to([$item->action->controller."/".$item->action->action]); }  ?>" class="sidebar_li_link <?php if (!$drop) { echo getActiveTwo( $item->action->controller, $item->action->action); }  ?>">
+                                <i class="i-n <?= $item->icon ?>"></i>
+                                <span><?= $item->name ?></span>
+                                <?php if ($drop) { echo "<i class='icon-n fa-solid fa-chevron-right'></i>";}  ?>
+                            </a>
+                            <?php if ($drop) : ?>
+                                <div class="menu_drop" style="<?= $activeStyle ?>">
+                                    <ul class="sub_menu_ul">
+                                        <?php if (isset($subMenus)) : ?>
+                                            <?php foreach ($subMenus as $subMenu) : ?>
+                                                <?php $subMenuPermission = Permission::isPermission($subMenu->action_id, $user); ?>
+                                                <?php if ($subMenuPermission) : ?>
+                                                    <li class="sub_menu_li <?= getActiveSubMenu($subMenu->action->controller, $subMenu->action->action) ?>">
+                                                        <a href="<?= Url::to([$subMenu->action->controller."/".$subMenu->action->action]) ?>">
+                                                            <?= $subMenu->name ?>
+                                                        </a>
+                                                    </li>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </ul>
+                                </div>
 
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['branch/index']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Filiallar</span>
-                    </a>
-                </li>
+                            <?php endif; ?>
+                        </li>
+                    <?php endif; ?>
 
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['subjects/index']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Fanlar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['direction/index']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Yo'nalishlar</span>
-                    </a>
-                </li>
-
-
-                <li class="sidebar_li sidebar_drop">
-                    <a href="javascript: void(0);" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-graduation-cap"></i>
-                        <span>
-                            Ta'lim jarayoni
-                        </span>
-                        <i class="icon-n fa-solid fa-chevron-right"></i>
-                    </a>
-                    <div class="menu_drop">
-                        <ul class="sub_menu_ul">
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['lang/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Ta'lim tili
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['edu-type/index']) ?>">
-                                    Ta'lim turi
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['edu-form/index']) ?>">
-                                    Ta'lim shakli
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['edu-direction/index']) ?>">
-                                    Qabul
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="sidebar_li sidebar_drop">
-                    <a href="javascript: void(0);" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-graduation-cap"></i>
-                        <span>
-                            Qabul 2025
-                        </span>
-                        <i class="icon-n fa-solid fa-chevron-right"></i>
-                    </a>
-                    <div class="menu_drop">
-                        <ul class="sub_menu_ul">
-                            <?php foreach ($eduTypes as $eduType) : ?>
-                                <li class="sub_menu_li">
-                                    <a href="<?= Url::to(['student/index' , 'id' => $eduType->id]) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                        <?= $eduType->name_uz ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="sidebar_li sidebar_drop">
-                    <a href="javascript: void(0);" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-graduation-cap"></i>
-                        <span>
-                            Yuborilgan fayllar
-                        </span>
-                        <i class="icon-n fa-solid fa-chevron-right"></i>
-                    </a>
-                    <div class="menu_drop">
-                        <ul class="sub_menu_ul">
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['exam-subject/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Sertifikat
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['student-oferta/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Oferta
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['student/chala']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Chala arizalar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['student/contract']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Barcha shartnomalar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['student/all']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Umumiy arizalar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li">
-                    <a href="<?= Url::to(['student/archive']) ?>" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-user-group"></i>
-                        <span>Arxiv</span>
-                    </a>
-                </li>
-
-                <li class="sidebar_li sidebar_drop">
-                    <a href="javascript: void(0);" class="sidebar_li_link">
-                        <i class="i-n fa-solid fa-graduation-cap"></i>
-                        <span>
-                            Tizim sozlamari
-                        </span>
-                        <i class="icon-n fa-solid fa-chevron-right"></i>
-                    </a>
-                    <div class="menu_drop">
-                        <ul class="sub_menu_ul">
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['employee/all']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Foydalanuvchilar
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['auth-item/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Ro'llar
-                                </a>
-                            </li>
-                            <li class="sub_menu_li">
-                                <a href="<?= Url::to(['languages/index']) ?>" class="<?= getActiveSubMenu('', '') ?>">
-                                    Til
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                    <?php
+                    $activeClass = "";
+                    $activeStyle = "";
+                endforeach; ?>
             </ul>
         </div>
-
     </div>
 </div>

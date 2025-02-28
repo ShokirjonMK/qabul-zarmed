@@ -95,23 +95,6 @@ class EduTypeController extends Controller
     }
 
     /**
-     * Deletes an existing EduType model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-        $model->is_deleted = 1;
-        $model->status = 0;
-        $model->save(false);
-        \Yii::$app->session->setFlash('success');
-        return $this->redirect(['index']);
-    }
-
-    /**
      * Finds the EduType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID

@@ -817,7 +817,7 @@ select.selectV2::-ms-expand {
 .badge-table-div.active {
     color: var(--color-blue);
 }
-.badge-table-div.inactive {
+.badge-table-div.danger {
     color: var(--color-red);
 }
 table tr:hover td .badge-table-div {

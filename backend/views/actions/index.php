@@ -1,23 +1,23 @@
 <?php
 
-use common\models\Menu;
+use common\models\Actions;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var common\models\MenuSearch $searchModel */
+/** @var common\models\ActionsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Menyular');
+$this->title = Yii::t('app', 'Sahifalar');
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
     'url' => ['/'],
 ];
 ?>
-<div class="page">
+<div class="actions-index">
 
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -30,44 +30,33 @@ $breadcrumbs['item'][] = [
         </ol>
     </nav>
 
-    <div class="mb-3 mt-4">
-        <?= Html::a(Yii::t('app', 'Qo\'shish'), ['create'], ['class' => 'b-btn b-primary']) ?>
-    </div>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'name',
-//            'action_id',
-//            'icon',
+            'controller',
+            'action',
+            'description',
             [
-                'attribute' => 'Url',
+                'attribute' => 'status',
+                'contentOptions' => ['date-label' => 'status'],
                 'format' => 'raw',
-                'value' => function ($model) {
-                    if ($model->action_id != null) {
-                        return "<p>". $model->action->controller."/".$model->action->action ."</p>";
-                    } else {
-                        return "";
-                    }
-                }
-            ],
-            [
-                'attribute' => 'Pastki menyu',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    if ($model->action_id == null) {
-                        $url = Url::to(['menu/sub-menu', 'id' => $model->id]);
-                        return Html::a('Ichki menyu', $url, [
-                            'title' => 'Pastki menyular ro\'yhati',
-                            'class' => "badge-table-div active",
-                        ]);
-                    } else {
-                        return "<div class='badge-table-div active'>url</div>";
-                    }
-                }
+                'value' => function($model) {
+                    return "<div class='badge-table-div active'>" . ($model->status == 0 ? 'action' : 'Controller') . "</div>";
+                },
+                'filter' => Html::dropDownList(
+                    'status',
+                    $searchModel->status,
+                    [0 => 'action', 1 => 'Controller'],
+                    [
+                        'class' => 'form-control selectpicker', // Bootstrap Select sinfi
+                        'prompt' => 'Tanlang', // Bo‘sh filter
+                        'data-live-search' => "true" // Qidirish funksiyasi
+                    ]
+                ),
             ],
             [
                 'attribute' => 'Tahrirlash',
@@ -76,6 +65,8 @@ $breadcrumbs['item'][] = [
                 'value' => function($model) {
                     return Html::a(Yii::t('app', 'Tahrirlash'), ['update',  'id' => $model->id],
                         [
+                            "data-bs-toggle" => "modal",
+                            "data-bs-target" => "#actionsLoad",
                             "class" => "badge-table-div active",
                         ]);
                 },
@@ -95,5 +86,33 @@ $breadcrumbs['item'][] = [
             ],
         ],
     ]); ?>
-
 </div>
+
+<div class="modal fade" id="actionsLoad" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="form-section">
+                <div class="form-section_item">
+                    <div class="modal-body" id="studentInfoBody">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+$js = <<<JS
+$(document).ready(function() {
+    $('#actionsLoad').on('show.bs.modal', function (e) {
+        $(this).find('#studentInfoBody').empty();
+        var button = $(e.relatedTarget);
+        var url = button.attr('href');
+        $(this).find('#studentInfoBody').load(url);
+    });
+});
+JS;
+$this->registerJs($js);
+?>
+

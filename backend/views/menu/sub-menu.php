@@ -8,9 +8,10 @@ use yii\grid\GridView;
 
 /** @var yii\web\View $this */
 /** @var common\models\MenuSearch $searchModel */
+/** @var common\models\Menu $menu */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', $menu->name_uz);
+$this->title = Yii::t('app', $menu->name);
 $breadcrumbs = [];
 $breadcrumbs['item'][] = [
     'label' => Yii::t('app', 'Bosh sahifa'),
@@ -38,55 +39,42 @@ $breadcrumbs['item'][] = [
         <?= Html::a(Yii::t('app', 'Qo\'shish'), ['sub-menu-create' , 'id' => $menu->id], ['class' => 'b-btn b-primary']) ?>
     </div>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'name_uz',
-            'status',
+            'name',
             [
-                'attribute' => 'Url',
+                'attribute' => 'URL',
+                'contentOptions' => ['date-label' => 'URL'],
                 'format' => 'raw',
-                'value' => function ($model) {
-                    if ($model->action_id != null) {
-                        return "<p>". $model->action->controller."/".$model->action->action ."</p>";
-                    } else {
-                        return "";
-                    }
-                }
+                'value' => function($model) {
+                    return "<div class='badge-table-div active'>".$model->action->controller."/".$model->action->action."</div>";
+                },
             ],
             [
-                'class' => ActionColumn::className(),
-                'contentOptions' => ['date-label' => 'Harakatlar' , 'class' => 'd-flex justify-content-around'],
-                'header'=> 'Harakatlar',
-                'buttons'  => [
-                    'view'   => function ($url, $model) {
-                        $url = Url::to(['view', 'id' => $model->id]);
-                        return Html::a('<i class="fa fa-eye"></i>', $url, [
-                            'title' => 'view',
-                            'class' => 'tableIcon',
+                'attribute' => 'Tahrirlash',
+                'contentOptions' => ['date-label' => 'Tahrirlash'],
+                'format' => 'raw',
+                'value' => function($model) {
+                    return Html::a(Yii::t('app', 'Tahrirlash'), ['sub-menu-update',  'id' => $model->id],
+                        [
+                            "class" => "badge-table-div active",
                         ]);
-                    },
-                    'update' => function ($url, $model) {
-                        $url = Url::to(['sub-menu-update', 'id' => $model->id]);
-                        return Html::a('<i class="fa-solid fa-pen-to-square"></i>', $url, [
-                            'title' => 'update',
-                            'class' => 'tableIcon',
+                },
+            ],
+            [
+                'attribute' => 'O\'chirish',
+                'contentOptions' => ['date-label' => 'O\'chirish'],
+                'format' => 'raw',
+                'value' => function($model) {
+                    return Html::a(Yii::t('app', 'O\'chirish'), ['delete',  'id' => $model->id],
+                        [
+                            "data-method" => "post",
+                            "data-confirm" => "Siz rostdan ma\'lumotni o\'chirmoqchimisiz?",
+                            "class" => "badge-table-div danger",
                         ]);
-                    },
-                    'delete' => function ($url, $model) {
-                        $url = Url::to(['delete', 'id' => $model->id]);
-                        return Html::a('<i class="fa fa-trash"></i>', $url, [
-                            'title'        => 'delete',
-                            'class' => 'tableIcon',
-                            'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                            'data-method'  => 'post',
-                        ]);
-                    },
-                ]
+                },
             ],
         ],
     ]); ?>

@@ -282,87 +282,6 @@ class FileController extends Controller
         }
     }
 
-    public function actionOptionChange()
-    {
-        $questionId = \Yii::$app->request->post('question');
-        $optionId = \Yii::$app->request->post('option');
-
-        $result = Test::changeOption($questionId, $optionId);
-
-        if ($result['is_ok']) {
-            return 1;
-        }
-        return 0;
-    }
-
-
-    public function actionContract($type)
-    {
-        $user = Yii::$app->user->identity;
-        $student = Student::findOne(['user_id' => $user->id]);
-
-        $action = '';
-        if ($type == 2) {
-            if ($student->language_id == 1) {
-                $action = 'con2-uz';
-            } elseif ($student->language_id == 3) {
-                $action = 'con2-ru';
-            }
-        } elseif ($type == 3) {
-            if ($student->language_id == 1) {
-                $action = 'con3-uz';
-            } elseif ($student->language_id == 3) {
-                $action = 'con3-ru';
-            }
-        }
-
-        $content = $this->renderPartial($action, [
-            'student' => $student,
-            'type' => $type,
-            'user' => $user
-        ]);
-
-        $pdf = new Pdf([
-            'mode' => Pdf::MODE_UTF8,
-            'format' => Pdf::FORMAT_A4,
-            'marginLeft' => 25,
-            'orientation' => Pdf::ORIENT_PORTRAIT,
-            'destination' => Pdf::DEST_DOWNLOAD,
-            'content' => $content,
-            'cssInline' => 'body { font-family: Times, "Times New Roman", serif; }',
-            'filename' => date('YmdHis') . ".pdf",
-            'options' => [
-                'title' => 'Contract',
-                'subject' => 'Student Contract',
-                'keywords' => 'pdf, contract, student',
-            ],
-        ]);
-
-        if ($student->lead_id != null) {
-            try {
-                $amoCrmClient = Yii::$app->ikAmoCrm;
-                $leadId = $student->lead_id;
-                $tags = [];
-                $message = '';
-                $customFields = [];
-
-                $updatedFields = [
-                    'pipelineId' => $student->pipeline_id,
-                    'statusId' => User::STEP_STATUS_7
-                ];
-
-                $updatedLead = $amoCrmClient->updateLead($leadId, $updatedFields, $tags, $message, $customFields);
-            } catch (\Exception $e) {
-                $errors[] = ['Ma\'lumot uzatishda xatolik STEP 2: ' . $e->getMessage()];
-                Yii::$app->session->setFlash('error' , $errors);
-                return $this->redirect(['cabinet/index']);
-            }
-        }
-
-        return $pdf->render();
-    }
-
-
     public function actionDelDtm($id)
     {
         $user = Yii::$app->user->identity;
@@ -425,7 +344,6 @@ class FileController extends Controller
         }
     }
 
-
     public function actionDelMaster($id)
     {
         $user = Yii::$app->user->identity;
@@ -487,6 +405,5 @@ class FileController extends Controller
             ]);
         }
     }
-
 
 }
